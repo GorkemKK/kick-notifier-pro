@@ -28,7 +28,7 @@
 <img width="997" height="696" alt="image" src="https://github.com/user-attachments/assets/09b18f3a-4604-4559-bd8d-a1f5c05daf7a" />
 <img width="996" height="697" alt="image" src="https://github.com/user-attachments/assets/611f667a-da1f-42a1-b5e4-02b9813f6683" />
 <img width="994" height="693" alt="image" src="https://github.com/user-attachments/assets/2ea5cb33-ee53-457e-b382-05126c23e74e" />
-<img width="331" height="311" alt="image" src="https://github.com/user-attachments/assets/364a3004-23b5-4cb9-b81f-daf2b20e54e4" />
+<img width="333" height="309" alt="image" src="https://github.com/user-attachments/assets/1e8bd3bd-4a8f-437c-8162-b7d064ded721" /> <img width="331" height="311" alt="image" src="https://github.com/user-attachments/assets/364a3004-23b5-4cb9-b81f-daf2b20e54e4" />
 
 ## 🚀 Installation (For Users)
 
