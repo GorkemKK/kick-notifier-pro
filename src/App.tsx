@@ -368,7 +368,7 @@ export default function App() {
                                     {streamer.is_live && (
                                         <div className="absolute top-3 right-3 flex items-center gap-1.5 bg-[#00E701] text-black text-[10px] font-bold px-2 py-1 rounded-md shadow-lg shadow-[#00E701]/20 z-10">
                                             <span className="w-1.5 h-1.5 bg-black rounded-full animate-pulse" />
-                                            CANLI
+                                            {t(lang, 'liveBadge')}
                                         </div>
                                     )}
 
