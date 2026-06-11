@@ -1,0 +1,172 @@
+import { useState, useEffect } from 'react';
+import { X, Globe } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { t, Language } from '../locales';
+
+interface SettingsModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+}
+
+interface Settings {
+    notificationsEnabled: boolean;
+    soundEnabled: boolean;
+    startAtLogin: boolean;
+    checkInterval: number;
+    language: Language;
+}
+
+export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
+    const [settings, setSettings] = useState<Settings>({
+        notificationsEnabled: true,
+        soundEnabled: true,
+        startAtLogin: false,
+        checkInterval: 1,
+        language: 'en'
+    });
+
+    useEffect(() => {
+        if (isOpen) {
+            loadSettings();
+        }
+    }, [isOpen]);
+
+    const loadSettings = async () => {
+        const stored = await window.ipcRenderer.invoke('get-settings');
+        if (stored) {
+            setSettings({ ...settings, ...stored });
+        }
+    }
+
+    const saveSettings = async (newSettings: Settings) => {
+        setSettings(newSettings);
+        await window.ipcRenderer.invoke('set-settings', newSettings);
+        // Refresh page to apply language change globally immediately if needed,
+        // or let React state handle it if passed down (for this simple app, we just reload or rely on state)
+    }
+
+    const lang = settings.language;
+
+    return (
+        <AnimatePresence>
+            {isOpen && (
+                <>
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={onClose}
+                        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+                    />
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                        className="fixed inset-0 m-auto w-[400px] h-fit bg-[#14171A] border border-white/10 rounded-2xl shadow-2xl z-50 overflow-hidden"
+                    >
+                        <div className="p-6">
+                            <div className="flex justify-between items-center mb-6">
+                                <h2 className="text-xl font-bold text-white">{t(lang, 'settings')}</h2>
+                                <button onClick={onClose} className="p-2 hover:bg-white/5 rounded-lg text-gray-400 hover:text-white transition-colors">
+                                    <X className="w-5 h-5" />
+                                </button>
+                            </div>
+
+                            <div className="space-y-4">
+                                {/* Language Toggle */}
+                                <label className="flex items-center justify-between p-4 bg-[#0B0E0F] rounded-xl border border-white/5 cursor-pointer hover:border-[#00E701]/30 transition-colors group">
+                                    <div className="flex items-center gap-3">
+                                        <Globe className="w-5 h-5 text-gray-400 group-hover:text-[#00E701] transition-colors" />
+                                        <div>
+                                            <div className="font-medium text-white group-hover:text-[#00E701] transition-colors">{t(lang, 'language')}</div>
+                                            <div className="text-xs text-gray-500">{t(lang, 'languageDesc')}</div>
+                                        </div>
+                                    </div>
+                                    <div className="flex bg-gray-800 rounded-lg p-1">
+                                        <button
+                                            onClick={() => saveSettings({ ...settings, language: 'en' })}
+                                            className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${settings.language === 'en' ? 'bg-[#00E701] text-black' : 'text-gray-400 hover:text-white'}`}
+                                        >
+                                            EN
+                                        </button>
+                                        <button
+                                            onClick={() => saveSettings({ ...settings, language: 'tr' })}
+                                            className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${settings.language === 'tr' ? 'bg-[#00E701] text-black' : 'text-gray-400 hover:text-white'}`}
+                                        >
+                                            TR
+                                        </button>
+                                    </div>
+                                </label>
+
+                                <label className="flex items-center justify-between p-4 bg-[#0B0E0F] rounded-xl border border-white/5 cursor-pointer hover:border-[#00E701]/30 transition-colors group">
+                                    <div>
+                                        <div className="font-medium text-white group-hover:text-[#00E701] transition-colors">{t(lang, 'notifications')}</div>
+                                        <div className="text-xs text-gray-500">{t(lang, 'notificationsDesc')}</div>
+                                    </div>
+                                    <div
+                                        onClick={() => saveSettings({ ...settings, notificationsEnabled: !settings.notificationsEnabled })}
+                                        className={`w-12 h-6 rounded-full relative transition-colors ${settings.notificationsEnabled ? 'bg-[#00E701]' : 'bg-gray-700'}`}
+                                    >
+                                        <div className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform ${settings.notificationsEnabled ? 'translate-x-6' : 'translate-x-0'}`} />
+                                    </div>
+                                </label>
+
+                                <label className="flex items-center justify-between p-4 bg-[#0B0E0F] rounded-xl border border-white/5 cursor-pointer hover:border-[#00E701]/30 transition-colors group">
+                                    <div>
+                                        <div className="font-medium text-white group-hover:text-[#00E701] transition-colors">{t(lang, 'sound')}</div>
+                                        <div className="text-xs text-gray-500">{t(lang, 'soundDesc')}</div>
+                                    </div>
+                                    <div
+                                        onClick={() => saveSettings({ ...settings, soundEnabled: !settings.soundEnabled })}
+                                        className={`w-12 h-6 rounded-full relative transition-colors ${settings.soundEnabled ? 'bg-[#00E701]' : 'bg-gray-700'}`}
+                                    >
+                                        <div className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform ${settings.soundEnabled ? 'translate-x-6' : 'translate-x-0'}`} />
+                                    </div>
+                                </label>
+
+                                <label className="flex items-center justify-between p-4 bg-[#0B0E0F] rounded-xl border border-white/5 cursor-pointer hover:border-[#00E701]/30 transition-colors group">
+                                    <div>
+                                        <div className="font-medium text-white group-hover:text-[#00E701] transition-colors">{t(lang, 'startup')}</div>
+                                        <div className="text-xs text-gray-500">{t(lang, 'startupDesc')}</div>
+                                    </div>
+                                    <div
+                                        onClick={() => saveSettings({ ...settings, startAtLogin: !settings.startAtLogin })}
+                                        className={`w-12 h-6 rounded-full relative transition-colors ${settings.startAtLogin ? 'bg-[#00E701]' : 'bg-gray-700'}`}
+                                    >
+                                        <div className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform ${settings.startAtLogin ? 'translate-x-6' : 'translate-x-0'}`} />
+                                    </div>
+                                </label>
+
+                                <div className="p-4 bg-[#0B0E0F] rounded-xl border border-white/5 hover:border-[#00E701]/30 transition-colors group">
+                                    <div className="flex justify-between items-center mb-3">
+                                        <div>
+                                            <div className="font-medium text-white group-hover:text-[#00E701] transition-colors">{t(lang, 'checkInterval')}</div>
+                                            <div className="text-xs text-gray-500">{t(lang, 'checkIntervalDesc')}</div>
+                                        </div>
+                                        <div className="text-[#00E701] font-bold">{settings.checkInterval} {t(lang, 'minutes')}</div>
+                                    </div>
+                                    <input 
+                                        type="range" 
+                                        min="1" 
+                                        max="15" 
+                                        value={settings.checkInterval || 1} 
+                                        onChange={(e) => saveSettings({ ...settings, checkInterval: parseInt(e.target.value) })}
+                                        className="w-full accent-[#00E701]"
+                                    />
+                                    <div className="flex justify-between text-[10px] text-gray-600 mt-1">
+                                        <span>1 {t(lang, 'minutes')}</span>
+                                        <span>15 {t(lang, 'minutes')}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="mt-6 text-center text-xs text-gray-600">
+                                Kick Notifier Pro v1.0.4
+                            </div>
+                        </div>
+                    </motion.div>
+                </>
+            )}
+        </AnimatePresence>
+    );
+}
