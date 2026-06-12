@@ -16,7 +16,16 @@
 
 ---
 
-##  Why?
+## Statistics
+
+- **100% TypeScript** Codebase
+- Powered by **Electron** & **React 18**
+- Integrated **Auto-Updater** System
+- Custom **Singleton Window** Architecture
+
+---
+
+## Why?
 
 Many Kick users miss streams from their favorite creators because they either forget to check or don't want to rely on bloated browser extensions. 
 
@@ -24,9 +33,33 @@ Many Kick users miss streams from their favorite creators because they either fo
 
 ---
 
-##  Demo & Screenshots
+## Features
 
-*(A short GIF demonstrating adding a streamer and getting a notification will be added here soon)*
+| Feature | Status |
+| :--- | :---: |
+| **Live Stream Detection** | Active |
+| **Native Windows Desktop Notifications** | Active |
+| **Auto-Updater System (Background)** | Active |
+| **System Tray Integration** | Active |
+| **Glassmorphism UI & Dynamic Sorting** | Active |
+| **Verified Channel Badges & Follower Counts** | Active |
+| **Bilingual Support** | EN / TR |
+
+---
+
+## Download
+
+Get the latest version and start tracking your favorite streamers immediately!
+
+[**Download Latest Windows Release (.exe)**](https://github.com/GorkemKK/kick-notifier-pro/releases/latest)
+
+> [!NOTE]
+> **Windows SmartScreen Warning**
+> Since this is an open-source project without a paid code signing certificate, Windows Defender SmartScreen might show a blue warning saying "Windows protected your PC" on the first launch. Simply click **More info** -> **Run anyway**. This is completely normal for indie open-source apps.
+
+---
+
+## Screenshots
 
 <div align="center">
   <img width="992" height="693" alt="image" src="https://github.com/user-attachments/assets/2f1db52d-df22-4fbf-8d0a-628c21868024" />
@@ -45,34 +78,7 @@ Many Kick users miss streams from their favorite creators because they either fo
 
 ---
 
-##  Features
-
-| Feature | Status |
-| :--- | :---: |
-| **Live Stream Detection** | ✅ |
-| **Native Windows Desktop Notifications** | ✅ |
-| **Glassmorphism UI & Dynamic Sorting** | ✅ |
-| **Auto-Updater System (Background)** | ✅ |
-| **Verified Channel Badges & Follower Counts** | ✅ |
-| **Custom Polling Rates (1-15 Mins)** | ✅ |
-| **Bilingual (English & Turkish)** | ✅ |
-| **System Tray Integration** | ✅ |
-
----
-
-##  Download
-
-Get the latest version and start tracking your favorite streamers immediately!
-
- [**Download Latest Windows Release (.exe)**](https://github.com/GorkemKK/kick-notifier-pro/releases/latest)
-
-> [!NOTE]
-> **Windows SmartScreen Warning**
-> Since this is an open-source project without a paid code signing certificate, Windows Defender SmartScreen might show a blue warning saying "Windows protected your PC" on the first launch. Simply click **More info** -> **Run anyway**. This is completely normal for indie open-source apps.
-
----
-
-##  Architecture
+## Architecture
 
 The app uses a **Singleton `BrowserWindow` Queue Mechanism** to fetch data from Kick's API securely without triggering Cloudflare blocks, while reusing a single background window instance to prevent out-of-memory (OOM) errors.
 
@@ -86,7 +92,7 @@ graph TD;
 
 ---
 
-##  Tech Stack
+## Tech Stack
 
 **Frontend:**
 - HTML, CSS, TypeScript
@@ -105,7 +111,7 @@ graph TD;
 
 ---
 
-##  Project Structure
+## Project Structure
 
 ```text
 kick-notifier-pro/
@@ -123,17 +129,21 @@ kick-notifier-pro/
 
 ---
 
-##  Roadmap
+## Roadmap
 
 - [x] Initial release with stream monitoring
 - [x] Glassmorphism UI & sorting features
 - [x] Auto-updater background engine
 - [x] Verified channel badges & follower counts
+- [ ] Launch on startup option
+- [ ] Export / Import user settings
 - [ ] Notification history log
+- [ ] Twitch platform support integration
+- [ ] Discord Webhook support for automatic server announcements
 
 ---
 
-##  Development (For Developers)
+## Development (For Developers)
 
 Want to build it yourself? 
 
@@ -153,6 +163,6 @@ npm run build
 
 ---
 
-## 📝 License
+## License
 
 This project is open-source and available under the [MIT License](LICENSE). Feel free to fork, modify, and improve it!
