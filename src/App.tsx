@@ -155,8 +155,9 @@ export default function App() {
                     const soundEnabled = settings?.soundEnabled !== false;
 
                     if (notificationsEnabled) {
-                        // Use Chromium native HTML5 notification for stability
-                        new window.Notification(`${info.username} ${lang === 'tr' ? 'Yayında!' : 'is Live!'}`, {
+                        // Use Main Process Native Notification for Windows reliability
+                        window.ipcRenderer.invoke('show-notification', {
+                            title: `${info.username} ${lang === 'tr' ? 'Yayında!' : 'is Live!'}`,
                             body: `${info.title} - ${info.category}`,
                             icon: info.profile_pic,
                             silent: true
