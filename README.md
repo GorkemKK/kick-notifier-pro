@@ -27,9 +27,15 @@
 - **System Tray Integration:** Closes to the system tray and runs silently in the background so you never miss a stream.
 
 ##  Screenshots
-<img width="997" height="696" alt="image" src="https://github.com/user-attachments/assets/09b18f3a-4604-4559-bd8d-a1f5c05daf7a" />
-<img width="996" height="697" alt="image" src="https://github.com/user-attachments/assets/611f667a-da1f-42a1-b5e4-02b9813f6683" />
-<img width="994" height="693" alt="image" src="https://github.com/user-attachments/assets/2ea5cb33-ee53-457e-b382-05126c23e74e" />
+<img width="992" height="693" alt="image" src="https://github.com/user-attachments/assets/2f1db52d-df22-4fbf-8d0a-628c21868024" />
+<img width="986" height="696" alt="image" src="https://github.com/user-attachments/assets/c6e499dc-a856-406c-a793-345e5ac01ef9" />
+<img width="404" height="909" alt="image" src="https://github.com/user-attachments/assets/6904045c-67b2-4e5d-97ee-1159163b3eb8" />
+<img width="332" height="291" alt="image" src="https://github.com/user-attachments/assets/31fdad5c-0562-4973-8095-cc3abe0ade8e" /> <img width="333" height="290" alt="image" src="https://github.com/user-attachments/assets/aa3380ee-8e52-46ee-848e-6ea331bb274c" /> <img width="309" height="87" alt="image" src="https://github.com/user-attachments/assets/046b2243-a2f5-4f77-840e-dad37c4c529e" />
+
+
+
+
+
 
 ##  Installation (For Users)
 
