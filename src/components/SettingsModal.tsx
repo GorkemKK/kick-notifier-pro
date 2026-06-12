@@ -161,7 +161,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                             </div>
 
                             <div className="mt-6 text-center text-xs text-gray-600">
-                                Kick Notifier Pro v1.0.4
+                                Kick Notifier Pro v1.0.5
                             </div>
                         </div>
                     </motion.div>

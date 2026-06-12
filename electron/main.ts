@@ -226,7 +226,7 @@ ipcMain.handle('show-notification', (_, { title, body, icon, silent }) => {
     new Notification({
         title,
         body,
-        icon: icon ? undefined : getIconPath(), // Web URL ikonu bazen çalışmaz, yerel ikon güvenli
+        icon: getIconPath(), // Her zaman yerel güvenli ikonu kullan
         silent: silent !== undefined ? silent : false
     }).show();
 });
