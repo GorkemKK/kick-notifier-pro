@@ -14,7 +14,7 @@
 
 ---
 
-## ✨ Features
+##  Features
 
 - **Auto-Updater System:** Built-in seamless background updating engine. Just click "Check for Updates" and watch the app upgrade itself effortlessly.
 - **Glassmorphism UI & Sorting:** Next-gen animated, frosted-glass dropdown menu to sort your list by *Most Viewers*, *Least Viewers*, and *Most Followers*.
@@ -26,12 +26,12 @@
 - **Customizable Polling & Sounds:** Choose checking intervals (1 to 15 minutes) with a sleek slider, and enjoy minimal custom sound effects.
 - **System Tray Integration:** Closes to the system tray and runs silently in the background so you never miss a stream.
 
-## 🖼️ Screenshots
+##  Screenshots
 <img width="997" height="696" alt="image" src="https://github.com/user-attachments/assets/09b18f3a-4604-4559-bd8d-a1f5c05daf7a" />
 <img width="996" height="697" alt="image" src="https://github.com/user-attachments/assets/611f667a-da1f-42a1-b5e4-02b9813f6683" />
 <img width="994" height="693" alt="image" src="https://github.com/user-attachments/assets/2ea5cb33-ee53-457e-b382-05126c23e74e" />
 
-## 🚀 Installation (For Users)
+##  Installation (For Users)
 
 Check out the [Releases](https://github.com/GorkemKK/kick-notifier-pro/releases) tab to download the latest `.exe` installer.
 
@@ -43,7 +43,7 @@ Check out the [Releases](https://github.com/GorkemKK/kick-notifier-pro/releases)
 > **Windows SmartScreen Warning**
 > Since this is an open-source project without a paid code signing certificate, Windows Defender SmartScreen might show a blue warning saying "Windows protected your PC" on the first launch. Simply click **More info** -> **Run anyway**. This is completely normal for indie open-source apps.
 
-## 💻 Development (For Developers)
+##  Development (For Developers)
 
 If you want to contribute or build the app yourself, follow these steps:
 
@@ -76,10 +76,10 @@ npm run build
 ```
 The compiled setup file will be located inside the `release/` folder.
 
-## 🏗️ Architecture Notes
+##  Architecture Notes
 
 This app is designed to be completely safe against out-of-memory (OOM) errors. It utilizes a **Singleton `BrowserWindow` Queue Mechanism** to fetch data from Kick's API securely without triggering Cloudflare blocks, all while reusing a single background window instance.
 
-## 📝 License
+##  License
 
 This project is open-source and available for everyone. Feel free to fork, modify, and improve it!
