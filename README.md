@@ -16,12 +16,12 @@
 
 ---
 
-## Statistics
+## Statistics & Highlights
 
-- **100% TypeScript** Codebase
-- Powered by **Electron** & **React 18**
-- Integrated **Auto-Updater** System
-- Custom **Singleton Window** Architecture
+- Built with **TypeScript**, **React 18** and **Electron**
+- Native Windows desktop notifications
+- Background auto-update system
+- Singleton window architecture for efficient API polling
 
 ---
 
@@ -37,12 +37,12 @@ Many Kick users miss streams from their favorite creators because they either fo
 
 | Feature | Status |
 | :--- | :---: |
-| **Live Stream Detection** | Active |
-| **Native Windows Desktop Notifications** | Active |
-| **Auto-Updater System (Background)** | Active |
-| **System Tray Integration** | Active |
-| **Glassmorphism UI & Dynamic Sorting** | Active |
-| **Verified Channel Badges & Follower Counts** | Active |
+| **Live Stream Detection** | ✅ |
+| **Native Windows Desktop Notifications** | ✅ |
+| **Auto-Updater System (Background)** | ✅ |
+| **System Tray Integration** | ✅ |
+| **Glassmorphism UI & Dynamic Sorting** | ✅ |
+| **Verified Channel Badges & Follower Counts** | ✅ |
 | **Bilingual Support** | EN / TR |
 
 ---
@@ -135,9 +135,12 @@ kick-notifier-pro/
 - [x] Glassmorphism UI & sorting features
 - [x] Auto-updater background engine
 - [x] Verified channel badges & follower counts
-- [x] Launch on startup option
 - [ ] Kick account integration to automatically sync followed channels
+- [ ] Launch on startup option
+- [ ] Export / Import user settings
 - [ ] Notification history log
+- [ ] Discord Webhook support for automatic server announcements
+- [ ] Cross-platform support (macOS & Linux binaries)
 
 ---
 
