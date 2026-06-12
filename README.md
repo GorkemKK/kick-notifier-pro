@@ -3,89 +3,158 @@
 
   # Kick Notifier Pro
   
-  *A premium, lightweight, and bilingual desktop application to track your favorite Kick streamers and get instant live notifications.*
+  *Desktop application that monitors Kick streamers and sends instant native notifications when they go live.*
 
-  ![Electron](https://img.shields.io/badge/Electron-191970?style=for-the-badge&logo=Electron&logoColor=white)
-  ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
-  ![Vite](https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E)
-  ![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
-  ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+  [Download Latest Release](https://github.com/GorkemKK/kick-notifier-pro/releases/latest) | [Report Bug](https://github.com/GorkemKK/kick-notifier-pro/issues) | [Request Feature](https://github.com/GorkemKK/kick-notifier-pro/issues)
+
+  <br />
+
+  ![Electron](https://img.shields.io/badge/Electron-Desktop-191970?style=for-the-badge&logo=Electron&logoColor=white)
+  ![Platform](https://img.shields.io/badge/Platform-Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)
+  ![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)
 </div>
 
 ---
 
-##  Features
+## 🎯 Why?
 
-- **Auto-Updater System:** Built-in seamless background updating engine. Just click "Check for Updates" and watch the app upgrade itself effortlessly.
-- **Glassmorphism UI & Sorting:** Next-gen animated, frosted-glass dropdown menu to sort your list by *Most Viewers*, *Least Viewers*, and *Most Followers*.
-- **Verified Channel Badges:** Streamers officially verified on Kick get a glowing neon-green tick next to their names!
-- **Instant Native Notifications:** Get native Windows toast notifications the second a streamer goes live.
-- **Detailed Streamer Cards:** See live viewers, total followers, and dynamic game categories straight from the dashboard.
-- **Bilingual Support:** Fully localized in English and Turkish. Change the language instantly from settings.
-- **Ultra Lightweight Engine:** Built with a custom singleton queue architecture. It consumes minimal RAM and CPU, avoiding Cloudflare blocks.
-- **Customizable Polling & Sounds:** Choose checking intervals (1 to 15 minutes) with a sleek slider, and enjoy minimal custom sound effects.
-- **System Tray Integration:** Closes to the system tray and runs silently in the background so you never miss a stream.
+Many Kick users miss streams from their favorite creators because they either forget to check or don't want to rely on bloated browser extensions. 
 
-##  Screenshots
-<img width="992" height="693" alt="image" src="https://github.com/user-attachments/assets/2f1db52d-df22-4fbf-8d0a-628c21868024" />
-<img width="986" height="696" alt="image" src="https://github.com/user-attachments/assets/c6e499dc-a856-406c-a793-345e5ac01ef9" />
-<img width="404" height="909" alt="image" src="https://github.com/user-attachments/assets/6904045c-67b2-4e5d-97ee-1159163b3eb8" />
-<img width="332" height="291" alt="image" src="https://github.com/user-attachments/assets/31fdad5c-0562-4973-8095-cc3abe0ade8e" /> <img width="333" height="290" alt="image" src="https://github.com/user-attachments/assets/aa3380ee-8e52-46ee-848e-6ea331bb274c" /> <img width="309" height="87" alt="image" src="https://github.com/user-attachments/assets/046b2243-a2f5-4f77-840e-dad37c4c529e" />
+**Kick Notifier Pro** was built to solve this problem. It provides lightweight, real-time desktop notifications without requiring a browser to be open. It sits quietly in your system tray and alerts you the exact moment your favorite streamer goes live.
 
+---
 
+## 📸 Demo & Screenshots
 
+*(A short GIF demonstrating adding a streamer and getting a notification will be added here soon)*
 
+<div align="center">
+  <img width="992" height="693" alt="image" src="https://github.com/user-attachments/assets/2f1db52d-df22-4fbf-8d0a-628c21868024" />
+</div>
 
+<details>
+<summary>Click to see more screenshots</summary>
+<br>
+  <img width="986" height="696" alt="image" src="https://github.com/user-attachments/assets/c6e499dc-a856-406c-a793-345e5ac01ef9" />
+  <img width="404" height="909" alt="image" src="https://github.com/user-attachments/assets/6904045c-67b2-4e5d-97ee-1159163b3eb8" />
+  <br />
+  <img width="332" height="291" alt="image" src="https://github.com/user-attachments/assets/31fdad5c-0562-4973-8095-cc3abe0ade8e" /> 
+  <img width="333" height="290" alt="image" src="https://github.com/user-attachments/assets/aa3380ee-8e52-46ee-848e-6ea331bb274c" /> 
+  <img width="309" height="87" alt="image" src="https://github.com/user-attachments/assets/046b2243-a2f5-4f77-840e-dad37c4c529e" />
+</details>
 
-##  Installation (For Users)
+---
 
-Check out the [Releases](https://github.com/GorkemKK/kick-notifier-pro/releases) tab to download the latest `.exe` installer.
+## ✨ Features
 
-1. Download `Kick-Notifier-Pro-Setup.exe`
-2. Run the application.
-3. Add your favorite Kick streamers by typing their username!
+| Feature | Status |
+| :--- | :---: |
+| **Live Stream Detection** | ✅ |
+| **Native Windows Desktop Notifications** | ✅ |
+| **Glassmorphism UI & Dynamic Sorting** | ✅ |
+| **Auto-Updater System (Background)** | ✅ |
+| **Verified Channel Badges & Follower Counts** | ✅ |
+| **Custom Polling Rates (1-15 Mins)** | ✅ |
+| **Bilingual (English & Turkish)** | ✅ |
+| **System Tray Integration** | ✅ |
+
+---
+
+## 📥 Download
+
+Get the latest version and start tracking your favorite streamers immediately!
+
+👉 [**Download Latest Windows Release (.exe)**](https://github.com/GorkemKK/kick-notifier-pro/releases/latest)
 
 > [!NOTE]
 > **Windows SmartScreen Warning**
 > Since this is an open-source project without a paid code signing certificate, Windows Defender SmartScreen might show a blue warning saying "Windows protected your PC" on the first launch. Simply click **More info** -> **Run anyway**. This is completely normal for indie open-source apps.
 
-##  Development (For Developers)
+---
 
-If you want to contribute or build the app yourself, follow these steps:
+## 🏗️ Architecture
 
-### Prerequisites
-- [Node.js](https://nodejs.org/) (v18 or newer recommended)
-- Git
+The app uses a **Singleton `BrowserWindow` Queue Mechanism** to fetch data from Kick's API securely without triggering Cloudflare blocks, while reusing a single background window instance to prevent out-of-memory (OOM) errors.
 
-### Quick Start
+```mermaid
+graph TD;
+    Kick_API[Kick.com API] --> |Fetches Status| Background_Window[Hidden Electron Window];
+    Background_Window --> |Parses JSON| Main_Process[Electron Main Process];
+    Main_Process --> |Checks Rules| Notification_Engine[Native Windows Toast];
+    Main_Process --> |Sends IPC| React_UI[React / Vite Frontend];
+```
+
+---
+
+## 🛠️ Tech Stack
+
+**Frontend:**
+- HTML, CSS, TypeScript
+- React 18
+- TailwindCSS (Styling)
+- Framer Motion (Animations)
+
+**Desktop Core:**
+- Electron
+- Node.js
+
+**Build & Deployment:**
+- Vite
+- Electron-Builder
+- Electron-Updater
+
+---
+
+## 📂 Project Structure
+
+```text
+kick-notifier-pro/
+├── electron/
+│   ├── main.ts        # Main Electron process & Auto-Updater
+│   └── preload.ts     # IPC bridge
+├── public/
+│   └── assets/        # Icons and sounds
+├── src/
+│   ├── components/    # React components (Modals, Toasts)
+│   ├── App.tsx        # Main React Entry
+│   └── index.css      # Tailwind config & styling
+└── package.json       # Dependencies & Build config
+```
+
+---
+
+## 🗺️ Roadmap
+
+- [x] Initial release with stream monitoring
+- [x] Glassmorphism UI & sorting features
+- [x] Auto-updater background engine
+- [x] Verified channel badges & follower counts
+- [ ] Notification history log
+- [ ] Twitch platform support integration
+- [ ] Discord Webhook support for automatic server announcements
+
+---
+
+## 💻 Development (For Developers)
+
+Want to build it yourself? 
 
 ```bash
 # 1. Clone the repository
 git clone https://github.com/GorkemKK/kick-notifier-pro.git
 
-# 2. Enter the directory
-cd kick-notifier-pro
-
-# 3. Install dependencies
+# 2. Install dependencies
 npm install
 
-# 4. Run in development mode
+# 3. Run in development mode
 npm run dev
-```
 
-### Building for Production
-
-To create the final Windows executable (`.exe`):
-
-```bash
+# 4. Build executable
 npm run build
 ```
-The compiled setup file will be located inside the `release/` folder.
 
-##  Architecture Notes
+---
 
-This app is designed to be completely safe against out-of-memory (OOM) errors. It utilizes a **Singleton `BrowserWindow` Queue Mechanism** to fetch data from Kick's API securely without triggering Cloudflare blocks, all while reusing a single background window instance.
+## 📝 License
 
-##  License
-
-This project is open-source and available for everyone. Feel free to fork, modify, and improve it!
+This project is open-source and available under the [MIT License](LICENSE). Feel free to fork, modify, and improve it!
