@@ -1,6 +1,6 @@
 {
     "name": "kick-notifier-pro",
-    "version": "1.0.6",
+    "version": "1.1.5",
     "main": "dist-electron/main.js",
     "description": "Premium Kick Notification App",
     "homepage": "./",
@@ -12,7 +12,8 @@
             "target": [
                 "nsis"
             ],
-            "icon": "public/favicon.ico"
+            "icon": "public/favicon.ico",
+            "artifactName": "Kick-Notifier-Pro-Setup-${version}.${ext}"
         },
         "nsis": {
             "oneClick": false,
@@ -27,6 +28,11 @@
         ],
         "directories": {
             "output": "release"
+        },
+        "publish": {
+            "provider": "github",
+            "owner": "GorkemKK",
+            "repo": "kick-notifier-pro"
         }
     },
     "scripts": {
@@ -40,6 +46,7 @@
     "dependencies": {
         "clsx": "^2.1.1",
         "electron-store": "^8.2.0",
+        "electron-updater": "^6.8.9",
         "framer-motion": "^10.18.0",
         "lucide-react": "^0.292.0",
         "react": "^18.2.0",

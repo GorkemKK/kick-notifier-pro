@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Trash2, Settings, Users, MonitorPlay, Wifi, RefreshCw, X, ExternalLink } from 'lucide-react';
+import { Plus, Trash2, Settings, Users, MonitorPlay, Wifi, RefreshCw, X, ExternalLink, ChevronDown } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { t, Language } from './locales';
@@ -17,6 +17,8 @@ interface Streamer {
     viewers: number;
     title: string;
     category: string;
+    followers?: number;
+    is_verified?: boolean;
 }
 
 import SettingsModal from './components/SettingsModal';
@@ -31,6 +33,15 @@ export default function App() {
     const [error, setError] = useState<string | null>(null);
     const [streamerToDelete, setStreamerToDelete] = useState<string | null>(null);
     const [lang, setLang] = useState<Language>('en');
+    const [sortBy, setSortBy] = useState<'default' | 'viewers_desc' | 'viewers_asc' | 'followers_desc'>('default');
+    const [sortOpen, setSortOpen] = useState(false);
+
+    const sortOptions = [
+        { id: 'default', label: lang === 'tr' ? 'Eklenme Sırası' : 'Default Sort' },
+        { id: 'viewers_desc', label: lang === 'tr' ? 'En Çok İzlenen' : 'Most Viewers' },
+        { id: 'viewers_asc', label: lang === 'tr' ? 'En Az İzlenen' : 'Least Viewers' },
+        { id: 'followers_desc', label: lang === 'tr' ? 'En Çok Takipçi' : 'Most Followers' }
+    ];
 
     const handleOpenStream = (slug: string) => {
         window.ipcRenderer.invoke('open-external', `https://kick.com/${slug}`);
@@ -185,16 +196,50 @@ export default function App() {
     const handleAddStreamer = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!newSlug) return;
+
+        // Kullanıcı zaten ekliyse uyarı ver ve işlemi iptal et
+        const isAlreadyAdded = streamers.some(s => 
+            s.slug.toLowerCase() === newSlug.trim().toLowerCase() || 
+            s.username.toLowerCase() === newSlug.trim().toLowerCase()
+        );
+
+        if (isAlreadyAdded) {
+            setError(lang === 'tr' ? 'Bu yayıncı zaten listenizde ekli!' : 'This streamer is already in your list!');
+            setTimeout(() => setError(null), 3000);
+            return;
+        }
+
         setAdding(true);
         setError(null);
         try {
-            await window.ipcRenderer.invoke('add-streamer', newSlug);
+            const addedInfo = await window.ipcRenderer.invoke('add-streamer', newSlug);
             setNewSlug('');
             
             const settings = await window.ipcRenderer.invoke('get-settings');
-            if (settings?.soundEnabled !== false) playAddSound();
+            
+            // Eğer eklenen kişi o an yayındaysa direkt bildirim gönder (Testleri kolaylaştırmak ve bilgi vermek için)
+            if (addedInfo.is_live) {
+                if (settings?.notificationsEnabled !== false) {
+                    window.ipcRenderer.invoke('show-notification', {
+                        title: `${addedInfo.username} ${lang === 'tr' ? 'Yayında!' : 'is Live!'}`,
+                        body: `${addedInfo.title} - ${addedInfo.category}`,
+                        icon: addedInfo.profile_pic,
+                        silent: true,
+                        style: settings?.notificationStyle || 'transient'
+                    }).catch(console.error);
 
-            await loadStreamers();
+                    if (settings?.soundEnabled !== false) {
+                        playNotificationSound();
+                    }
+                }
+            } else {
+                if (settings?.soundEnabled !== false) playAddSound();
+            }
+
+            setStreamers(prev => {
+                if (prev.find(s => s.slug === addedInfo.slug)) return prev;
+                return [...prev, addedInfo];
+            });
         } catch (error) {
             console.error('Failed to add streamer', error);
             setError(lang === 'tr' ? 'Yayıncı bulunamadı!' : 'Streamer not found!');
@@ -211,12 +256,22 @@ export default function App() {
         const settings = await window.ipcRenderer.invoke('get-settings');
         if (settings?.soundEnabled !== false) playRemoveSound();
         
-        await loadStreamers();
+        setStreamers(prev => prev.filter(s => s.slug !== slug));
     };
 
-    const filteredStreamers = activeTab === 'live'
+    const filteredStreamers = [...(activeTab === 'live'
         ? streamers.filter(s => s.is_live)
-        : streamers;
+        : streamers)].sort((a, b) => {
+            if (sortBy === 'viewers_desc' || sortBy === 'viewers_asc') {
+                if (a.is_live && !b.is_live) return -1;
+                if (!a.is_live && b.is_live) return 1;
+            }
+
+            if (sortBy === 'viewers_desc') return (b.viewers || 0) - (a.viewers || 0);
+            if (sortBy === 'viewers_asc') return (a.viewers || 0) - (b.viewers || 0);
+            if (sortBy === 'followers_desc') return (b.followers || 0) - (a.followers || 0);
+            return 0;
+        });
 
     return (
         <div className="flex h-screen bg-[#0B0E0F] text-white overflow-hidden selection:bg-[#00E701] selection:text-black font-sans">
@@ -333,10 +388,45 @@ export default function App() {
                 </div>
 
                 <header className="flex items-center justify-between mb-8 mt-4 pt-4">
-                    <div>
+                    <div className="flex items-center gap-4">
                         <h2 className="text-2xl font-bold text-white">
                             {activeTab === 'live' ? t(lang, 'liveStreamers') : t(lang, 'allStreamers')}
                         </h2>
+                        
+                        <div className="relative">
+                            <button
+                                onClick={() => setSortOpen(!sortOpen)}
+                                className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 backdrop-blur-md text-white text-sm rounded-xl px-4 py-2 transition-all"
+                            >
+                                {sortOptions.find(o => o.id === sortBy)?.label}
+                                <ChevronDown className={cn("w-4 h-4 transition-transform", sortOpen && "rotate-180")} />
+                            </button>
+                            <AnimatePresence>
+                                {sortOpen && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                        className="absolute right-0 mt-2 w-48 bg-[#0B0E0F]/80 backdrop-blur-xl border border-white/10 rounded-xl overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.5)] z-50"
+                                    >
+                                        {sortOptions.map((opt) => (
+                                            <button
+                                                key={opt.id}
+                                                onClick={() => { setSortBy(opt.id as any); setSortOpen(false); }}
+                                                className={cn(
+                                                    "w-full text-left px-4 py-2.5 text-sm transition-colors",
+                                                    sortBy === opt.id 
+                                                        ? "bg-[#00E701]/20 text-[#00E701] font-medium" 
+                                                        : "text-gray-300 hover:bg-white/10 hover:text-white"
+                                                )}
+                                            >
+                                                {opt.label}
+                                            </button>
+                                        ))}
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </div>
                     </div>
                     <button onClick={loadStreamers} className="p-2 hover:bg-white/5 rounded-full transition-colors group" title={t(lang, 'refreshing')}>
                         <RefreshCw className={cn("w-5 h-5 text-gray-500 group-hover:text-white transition-all", loading && "animate-spin text-[#00E701]")} />
@@ -415,8 +505,23 @@ export default function App() {
                                         )}
                                     </div>
 
-                                    <h3 className="text-lg font-bold text-white truncate pr-2">{streamer.username}</h3>
-                                    <p className="text-sm text-gray-400 truncate mb-4">{streamer.category || t(lang, 'justChatting')}</p>
+                                    <div className="flex items-center gap-1.5">
+                                        <h3 className="text-lg font-bold text-white truncate">{streamer.username}</h3>
+                                        {streamer.is_verified && (
+                                            <div title={lang === 'tr' ? 'Onaylı Kanal' : 'Verified Channel'} className="bg-[#00E701] rounded-full p-0.5 flex items-center justify-center shrink-0 shadow-[0_0_8px_rgba(0,231,1,0.5)]">
+                                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="flex items-center gap-2 mb-4">
+                                        <p className="text-sm text-gray-400 truncate">{streamer.category || t(lang, 'justChatting')}</p>
+                                        {streamer.followers !== undefined && (
+                                            <>
+                                                <span className="text-gray-600 text-xs">•</span>
+                                                <p className="text-xs text-gray-400 font-medium whitespace-nowrap">{(streamer.followers).toLocaleString()} {lang === 'tr' ? 'Takipçi' : 'Followers'}</p>
+                                            </>
+                                        )}
+                                    </div>
 
                                     {streamer.is_live ? (
                                         <div className="bg-[#0B0E0F] rounded-lg p-3 border border-white/5">

@@ -5,7 +5,13 @@ import './index.css'
 
 import NotificationToast from './components/NotificationToast.tsx'
 
-const isNotification = window.location.hash === '#/notification';
+const hash = window.location.hash;
+const searchParams = new URLSearchParams(window.location.search);
+const isNotification = hash === '#/notification' || hash === '#notification' || searchParams.get('mode') === 'notification';
+
+if (isNotification) {
+    document.body.style.backgroundColor = 'transparent';
+}
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>

@@ -14,27 +14,28 @@
 
 ---
 
-## Features
+## ✨ Features
 
-- **Instant Notifications:** Get native Windows toast notifications the second a streamer goes live.
+- **Auto-Updater System:** Built-in seamless background updating engine. Just click "Check for Updates" and watch the app upgrade itself effortlessly.
+- **Glassmorphism UI & Sorting:** Next-gen animated, frosted-glass dropdown menu to sort your list by *Most Viewers*, *Least Viewers*, and *Most Followers*.
+- **Verified Channel Badges:** Streamers officially verified on Kick get a glowing neon-green tick next to their names!
+- **Instant Native Notifications:** Get native Windows toast notifications the second a streamer goes live.
+- **Detailed Streamer Cards:** See live viewers, total followers, and dynamic game categories straight from the dashboard.
 - **Bilingual Support:** Fully localized in English and Turkish. Change the language instantly from settings.
-- **Ultra Lightweight:** Built with a custom singleton queue architecture. It consumes minimal RAM and CPU, unlike other Electron wrappers.
-- **Customizable Polling:** Choose how often the app checks for live status (1 to 15 minutes) using a sleek slider.
-- **Smart Sounds:** Custom minimal sound effects for adding, removing, and live notifications.
-- **Premium UI:** Glassmorphism, smooth micro-animations powered by Framer Motion, and a modern dark theme.
-- **Background Running:** Closes to the system tray and runs silently in the background.
+- **Ultra Lightweight Engine:** Built with a custom singleton queue architecture. It consumes minimal RAM and CPU, avoiding Cloudflare blocks.
+- **Customizable Polling & Sounds:** Choose checking intervals (1 to 15 minutes) with a sleek slider, and enjoy minimal custom sound effects.
+- **System Tray Integration:** Closes to the system tray and runs silently in the background so you never miss a stream.
 
-## Screenshots
+## 🖼️ Screenshots
 <img width="997" height="696" alt="image" src="https://github.com/user-attachments/assets/09b18f3a-4604-4559-bd8d-a1f5c05daf7a" />
 <img width="996" height="697" alt="image" src="https://github.com/user-attachments/assets/611f667a-da1f-42a1-b5e4-02b9813f6683" />
 <img width="994" height="693" alt="image" src="https://github.com/user-attachments/assets/2ea5cb33-ee53-457e-b382-05126c23e74e" />
-<img width="333" height="309" alt="image" src="https://github.com/user-attachments/assets/1e8bd3bd-4a8f-437c-8162-b7d064ded721" /> <img width="331" height="311" alt="image" src="https://github.com/user-attachments/assets/364a3004-23b5-4cb9-b81f-daf2b20e54e4" />
 
-## Installation (For Users)
+## 🚀 Installation (For Users)
 
-Check out the [Releases](../../releases) tab to download the latest `.exe` installer.
+Check out the [Releases](https://github.com/GorkemKK/kick-notifier-pro/releases) tab to download the latest `.exe` installer.
 
-1. Download `Kick Notifier Pro Setup.exe`
+1. Download `Kick-Notifier-Pro-Setup.exe`
 2. Run the application.
 3. Add your favorite Kick streamers by typing their username!
 
@@ -42,7 +43,7 @@ Check out the [Releases](../../releases) tab to download the latest `.exe` insta
 > **Windows SmartScreen Warning**
 > Since this is an open-source project without a paid code signing certificate, Windows Defender SmartScreen might show a blue warning saying "Windows protected your PC" on the first launch. Simply click **More info** -> **Run anyway**. This is completely normal for indie open-source apps.
 
-## Development (For Developers)
+## 💻 Development (For Developers)
 
 If you want to contribute or build the app yourself, follow these steps:
 
@@ -63,7 +64,7 @@ cd kick-notifier-pro
 npm install
 
 # 4. Run in development mode
-npm start
+npm run dev
 ```
 
 ### Building for Production
@@ -75,10 +76,10 @@ npm run build
 ```
 The compiled setup file will be located inside the `release/` folder.
 
-## Architecture Notes
+## 🏗️ Architecture Notes
 
 This app is designed to be completely safe against out-of-memory (OOM) errors. It utilizes a **Singleton `BrowserWindow` Queue Mechanism** to fetch data from Kick's API securely without triggering Cloudflare blocks, all while reusing a single background window instance.
 
-## License
+## 📝 License
 
 This project is open-source and available for everyone. Feel free to fork, modify, and improve it!

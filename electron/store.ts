@@ -12,6 +12,8 @@ interface Streamer {
     viewers?: number;
     title?: string;
     category?: string;
+    followers?: number;
+    is_verified?: boolean;
 }
 
 /**

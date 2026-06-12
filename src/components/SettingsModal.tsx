@@ -1,7 +1,13 @@
 import { useState, useEffect } from 'react';
-import { X, Globe } from 'lucide-react';
+import { X, Globe, RefreshCw } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { t, Language } from '../locales';
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+function cn(...inputs: ClassValue[]) {
+    return twMerge(clsx(inputs));
+}
 
 interface SettingsModalProps {
     isOpen: boolean;
@@ -24,12 +30,48 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
         checkInterval: 1,
         language: 'en'
     });
+    
+    const [updateStatus, setUpdateStatus] = useState<string | null>(null);
+    const [updateProgress, setUpdateProgress] = useState<number | null>(null);
 
     useEffect(() => {
         if (isOpen) {
             loadSettings();
         }
     }, [isOpen]);
+
+    useEffect(() => {
+        const handleAvailable = () => setUpdateStatus(settings.language === 'tr' ? 'Güncelleme bulundu. İndiriliyor...' : 'Update found. Downloading...');
+        const handleNotAvailable = () => { setUpdateStatus(settings.language === 'tr' ? 'Uygulama güncel.' : 'App is up to date.'); setTimeout(() => setUpdateStatus(null), 3000); };
+        const handleProgress = (e: any, prog: any) => setUpdateProgress(prog.percent);
+        const handleDownloaded = () => { setUpdateStatus('Ready'); setUpdateProgress(null); };
+        const handleError = (e: any, err: any) => {
+            console.error('Update error:', err);
+            const errStr = String(err);
+            if (errStr.includes('latest.yml')) {
+                setUpdateStatus(settings.language === 'tr' ? 'Hata: GitHub üzerinde latest.yml eksik!' : 'Error: latest.yml missing on GitHub!');
+            } else if (errStr.includes('404')) {
+                setUpdateStatus(settings.language === 'tr' ? 'Hata: Güncelleme dosyası (.exe) GitHub üzerinde bulunamadı!' : 'Error: Update file (.exe) not found on GitHub!');
+            } else {
+                setUpdateStatus(settings.language === 'tr' ? 'Güncelleme hatası oluştu.' : 'Update error occurred.');
+            }
+            setTimeout(() => setUpdateStatus(null), 5000);
+        };
+
+        window.ipcRenderer.on('update-available', handleAvailable);
+        window.ipcRenderer.on('update-not-available', handleNotAvailable);
+        window.ipcRenderer.on('download-progress', handleProgress);
+        window.ipcRenderer.on('update-downloaded', handleDownloaded);
+        window.ipcRenderer.on('update-error', handleError);
+
+        return () => {
+            window.ipcRenderer.off('update-available', handleAvailable);
+            window.ipcRenderer.off('update-not-available', handleNotAvailable);
+            window.ipcRenderer.off('download-progress', handleProgress);
+            window.ipcRenderer.off('update-downloaded', handleDownloaded);
+            window.ipcRenderer.off('update-error', handleError);
+        }
+    }, [settings.language]);
 
     const loadSettings = async () => {
         const stored = await window.ipcRenderer.invoke('get-settings');
@@ -50,29 +92,29 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
     return (
         <AnimatePresence>
             {isOpen && (
-                <>
+                <div className="fixed inset-0 flex items-center justify-center z-[100]">
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
+                        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
                         onClick={onClose}
-                        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
                     />
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                        className="fixed inset-0 m-auto w-[400px] h-fit bg-[#14171A] border border-white/10 rounded-2xl shadow-2xl z-50 overflow-hidden"
+                        className="bg-[#14171A] border border-white/10 rounded-2xl p-6 w-[400px] shadow-2xl relative z-[101] flex flex-col max-h-[90vh]"
                     >
-                        <div className="p-6">
-                            <div className="flex justify-between items-center mb-6">
+                        <div className="p-6 flex flex-col flex-1 min-h-0">
+                            <div className="flex justify-between items-center mb-6 shrink-0">
                                 <h2 className="text-xl font-bold text-white">{t(lang, 'settings')}</h2>
-                                <button onClick={onClose} className="p-2 hover:bg-white/5 rounded-lg text-gray-400 hover:text-white transition-colors">
+                                <button onClick={onClose} className="p-2 hover:bg-white/5 rounded-lg text-gray-400 hover:text-white transition-colors shrink-0">
                                     <X className="w-5 h-5" />
                                 </button>
                             </div>
 
-                            <div className="space-y-4">
+                            <div className="space-y-4 overflow-y-auto pr-2 flex-1 min-h-0">
                                 {/* Language Toggle */}
                                 <label className="flex items-center justify-between p-4 bg-[#0B0E0F] rounded-xl border border-white/5 cursor-pointer hover:border-[#00E701]/30 transition-colors group">
                                     <div className="flex items-center gap-3">
@@ -183,12 +225,36 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                                 </div>
                             </div>
 
-                            <div className="mt-6 text-center text-xs text-gray-600">
-                                Kick Notifier Pro v1.0.6
+                            <div className="mt-6 border-t border-white/5 pt-4">
+                                {updateStatus !== 'Ready' ? (
+                                    <button
+                                        onClick={() => window.ipcRenderer.send('check-for-updates')}
+                                        className="w-full py-2.5 bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white rounded-xl transition-colors text-sm font-medium flex items-center justify-center gap-2"
+                                    >
+                                        <RefreshCw className={cn("w-4 h-4", updateStatus?.includes('ndiriliyor') || updateStatus?.includes('ownloading') ? "animate-spin text-[#00E701]" : "")} />
+                                        {updateStatus || (lang === 'tr' ? 'Güncellemeleri Kontrol Et' : 'Check for Updates')}
+                                    </button>
+                                ) : (
+                                    <button
+                                        onClick={() => window.ipcRenderer.send('install-update')}
+                                        className="w-full py-2.5 bg-[#00E701] hover:bg-[#00E701]/90 text-black rounded-xl transition-colors text-sm font-bold flex items-center justify-center gap-2 animate-pulse"
+                                    >
+                                        {lang === 'tr' ? 'Güncelle ve Yeniden Başlat' : 'Update & Restart'}
+                                    </button>
+                                )}
+                                {updateProgress !== null && (
+                                    <div className="mt-2 h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
+                                        <div className="h-full bg-[#00E701] transition-all duration-300" style={{ width: `${updateProgress}%` }} />
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="mt-4 text-center text-xs text-gray-600 shrink-0">
+                                Kick Notifier Pro v1.1.5
                             </div>
                         </div>
                     </motion.div>
-                </>
+                </div>
             )}
         </AnimatePresence>
     );

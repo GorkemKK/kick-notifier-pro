@@ -30,8 +30,8 @@ export default function NotificationToast() {
                     initial={{ opacity: 0, x: 50, scale: 0.95 }}
                     animate={{ opacity: 1, x: 0, scale: 1 }}
                     exit={{ opacity: 0, x: 50, scale: 0.95 }}
-                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                    className="relative w-full h-full bg-[#14171A]/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.8)] flex items-center p-3 overflow-hidden"
+                    transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                    className="bg-black/60 backdrop-blur-md border border-white/10 rounded-2xl p-4 w-full h-full shadow-2xl relative overflow-hidden flex items-center"
                     style={{ WebkitAppRegion: 'drag' } as any}
                 >
                     {/* Glowing effect */}

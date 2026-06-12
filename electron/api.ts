@@ -10,6 +10,8 @@ export interface StreamerInfo {
     profile_pic: string;
     category: string;
     title: string;
+    followers: number;
+    is_verified: boolean;
 }
 
 let sharedWin: BrowserWindow | null = null;
@@ -91,6 +93,8 @@ async function processQueue() {
                                     profile_pic: data.user.profile_pic,
                                     category: livestream ? livestream.categories[0]?.name : '',
                                     title: livestream ? livestream.session_title : '',
+                                    followers: data.followers_count || data.followersCount || (data.user && data.user.followers_count) || 0,
+                                    is_verified: !!(data.verified?.status === 'approved' || data.is_verified || data.verified?.id || data.verified || data.user?.is_verified)
                                 });
                                 cleanup();
                                 return;

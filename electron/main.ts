@@ -1,6 +1,7 @@
 // ... (imports)
 import { app, BrowserWindow, ipcMain, Notification, shell, Tray, Menu, nativeImage } from 'electron'
 import { join } from 'node:path'
+import { autoUpdater } from 'electron-updater';
 import { getStreamerInfo } from './api';
 
 // Window Controls
@@ -139,6 +140,53 @@ app.whenReady().then(() => {
     
     createWindow();
     createTray();
+
+    if (app.isPackaged) {
+        autoUpdater.autoDownload = true;
+        
+        autoUpdater.on('update-available', (info) => {
+            win?.webContents.send('update-available', info);
+        });
+        
+        autoUpdater.on('update-not-available', (info) => {
+            win?.webContents.send('update-not-available', info);
+        });
+        
+        autoUpdater.on('download-progress', (progressObj) => {
+            win?.webContents.send('download-progress', progressObj);
+        });
+        
+        autoUpdater.on('update-downloaded', (info) => {
+            win?.webContents.send('update-downloaded', info);
+        });
+        
+        autoUpdater.on('error', (err) => {
+            win?.webContents.send('update-error', err.message);
+        });
+
+        // Trigger first check
+        autoUpdater.checkForUpdatesAndNotify();
+    }
+});
+
+ipcMain.on('check-for-updates', () => {
+    if (app.isPackaged) {
+        autoUpdater.checkForUpdates();
+    } else {
+        win?.webContents.send('update-not-available', { version: 'Dev Mode' });
+    }
+});
+
+ipcMain.on('download-update', () => {
+    if (app.isPackaged) {
+        autoUpdater.downloadUpdate();
+    }
+});
+
+ipcMain.on('install-update', () => {
+    if (app.isPackaged) {
+        autoUpdater.quitAndInstall();
+    }
 });
 
 app.on('window-all-closed', () => {
@@ -176,7 +224,9 @@ ipcMain.handle('add-streamer', async (_, slug: string) => {
             is_live: info.is_live,
             viewers: info.viewers,
             title: info.title,
-            category: info.category
+            category: info.category,
+            followers: info.followers,
+            is_verified: info.is_verified
         });
         store.set('streamers', streamers);
     }
@@ -243,13 +293,14 @@ ipcMain.handle('show-notification', (_, { title, body, icon, silent, style }) =>
     }
 
     const { screen } = require('electron');
-    const { width, height } = screen.getPrimaryDisplay().workAreaSize;
+    const display = screen.getDisplayNearestPoint(screen.getCursorScreenPoint());
+    const { x, y, width, height } = display.workArea;
 
     notificationWin = new BrowserWindow({
         width: 320,
         height: 100,
-        x: width - 320 - 20, // 20px padding from right
-        y: height - 100 - 20, // 20px padding from bottom
+        x: x + width - 320 - 20, // 20px padding from right on the active monitor
+        y: y + height - 100 - 20, // 20px padding from bottom on the active monitor
         frame: false,
         transparent: true,
         alwaysOnTop: notifStyle === 'transient', // On top if transient, behind if persistent (desktop mode)
@@ -263,21 +314,24 @@ ipcMain.handle('show-notification', (_, { title, body, icon, silent, style }) =>
         }
     });
 
-    const notifUrl = process.env.VITE_DEV_SERVER_URL 
-        ? `${process.env.VITE_DEV_SERVER_URL}#/notification`
-        : `file://${join(process.env.DIST || '', 'index.html')}#/notification`;
-
-    notificationWin.loadURL(notifUrl);
+    if (process.env.VITE_DEV_SERVER_URL) {
+        notificationWin.loadURL(`${process.env.VITE_DEV_SERVER_URL}#/notification`);
+    } else {
+        notificationWin.loadFile(join(process.env.DIST || '', 'index.html'), { search: 'mode=notification' });
+    }
     
     // Pass data once ready
     ipcMain.once('notification-ready', () => {
         notificationWin?.webContents.send('notification-data', { title, body, icon });
     });
 
+    const currentWin = notificationWin;
     if (notifStyle === 'transient') {
         setTimeout(() => {
-            if (notificationWin) {
-                notificationWin.close();
+            if (currentWin && !currentWin.isDestroyed()) {
+                currentWin.close();
+            }
+            if (notificationWin === currentWin) {
                 notificationWin = null;
             }
         }, 5000);
