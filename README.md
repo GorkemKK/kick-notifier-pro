@@ -16,7 +16,7 @@
 
 ---
 
-## 🎯 Why?
+##  Why?
 
 Many Kick users miss streams from their favorite creators because they either forget to check or don't want to rely on bloated browser extensions. 
 
@@ -24,7 +24,7 @@ Many Kick users miss streams from their favorite creators because they either fo
 
 ---
 
-## 📸 Demo & Screenshots
+##  Demo & Screenshots
 
 *(A short GIF demonstrating adding a streamer and getting a notification will be added here soon)*
 
@@ -45,7 +45,7 @@ Many Kick users miss streams from their favorite creators because they either fo
 
 ---
 
-## ✨ Features
+##  Features
 
 | Feature | Status |
 | :--- | :---: |
@@ -60,11 +60,11 @@ Many Kick users miss streams from their favorite creators because they either fo
 
 ---
 
-## 📥 Download
+##  Download
 
 Get the latest version and start tracking your favorite streamers immediately!
 
-👉 [**Download Latest Windows Release (.exe)**](https://github.com/GorkemKK/kick-notifier-pro/releases/latest)
+ [**Download Latest Windows Release (.exe)**](https://github.com/GorkemKK/kick-notifier-pro/releases/latest)
 
 > [!NOTE]
 > **Windows SmartScreen Warning**
@@ -72,7 +72,7 @@ Get the latest version and start tracking your favorite streamers immediately!
 
 ---
 
-## 🏗️ Architecture
+##  Architecture
 
 The app uses a **Singleton `BrowserWindow` Queue Mechanism** to fetch data from Kick's API securely without triggering Cloudflare blocks, while reusing a single background window instance to prevent out-of-memory (OOM) errors.
 
@@ -86,7 +86,7 @@ graph TD;
 
 ---
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 **Frontend:**
 - HTML, CSS, TypeScript
@@ -105,7 +105,7 @@ graph TD;
 
 ---
 
-## 📂 Project Structure
+##  Project Structure
 
 ```text
 kick-notifier-pro/
@@ -123,19 +123,17 @@ kick-notifier-pro/
 
 ---
 
-## 🗺️ Roadmap
+##  Roadmap
 
 - [x] Initial release with stream monitoring
 - [x] Glassmorphism UI & sorting features
 - [x] Auto-updater background engine
 - [x] Verified channel badges & follower counts
 - [ ] Notification history log
-- [ ] Twitch platform support integration
-- [ ] Discord Webhook support for automatic server announcements
 
 ---
 
-## 💻 Development (For Developers)
+##  Development (For Developers)
 
 Want to build it yourself? 
 
