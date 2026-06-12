@@ -135,11 +135,9 @@ kick-notifier-pro/
 - [x] Glassmorphism UI & sorting features
 - [x] Auto-updater background engine
 - [x] Verified channel badges & follower counts
-- [ ] Launch on startup option
-- [ ] Export / Import user settings
+- [x] Launch on startup option
+- [ ] Kick account integration to automatically sync followed channels
 - [ ] Notification history log
-- [ ] Twitch platform support integration
-- [ ] Discord Webhook support for automatic server announcements
 
 ---
 
