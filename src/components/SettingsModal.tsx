@@ -111,6 +111,29 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                                     </div>
                                 </label>
 
+                                {settings.notificationsEnabled && (
+                                    <label className="flex items-center justify-between p-4 bg-[#0B0E0F] rounded-xl border border-white/5 cursor-pointer hover:border-[#00E701]/30 transition-colors group ml-4 border-l-2 border-l-[#00E701]/30">
+                                        <div className="pr-4">
+                                            <div className="font-medium text-white group-hover:text-[#00E701] transition-colors">{t(lang, 'notifStyle')}</div>
+                                            <div className="text-xs text-gray-500">{t(lang, 'notifStyleDesc')}</div>
+                                        </div>
+                                        <div className="flex flex-col gap-1 min-w-[140px]">
+                                            <button
+                                                onClick={() => saveSettings({ ...settings, notificationStyle: 'transient' })}
+                                                className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${settings.notificationStyle !== 'persistent' ? 'bg-[#00E701] text-black' : 'bg-gray-800 text-gray-400 hover:text-white'}`}
+                                            >
+                                                {t(lang, 'styleTransient')}
+                                            </button>
+                                            <button
+                                                onClick={() => saveSettings({ ...settings, notificationStyle: 'persistent' })}
+                                                className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${settings.notificationStyle === 'persistent' ? 'bg-[#00E701] text-black' : 'bg-gray-800 text-gray-400 hover:text-white'}`}
+                                            >
+                                                {t(lang, 'stylePersistent')}
+                                            </button>
+                                        </div>
+                                    </label>
+                                )}
+
                                 <label className="flex items-center justify-between p-4 bg-[#0B0E0F] rounded-xl border border-white/5 cursor-pointer hover:border-[#00E701]/30 transition-colors group">
                                     <div>
                                         <div className="font-medium text-white group-hover:text-[#00E701] transition-colors">{t(lang, 'sound')}</div>
@@ -161,7 +184,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                             </div>
 
                             <div className="mt-6 text-center text-xs text-gray-600">
-                                Kick Notifier Pro v1.0.5
+                                Kick Notifier Pro v1.0.6
                             </div>
                         </div>
                     </motion.div>

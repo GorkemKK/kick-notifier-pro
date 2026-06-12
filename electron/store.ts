@@ -22,6 +22,7 @@ interface StoreSchema {
     settings: {
         checkInterval: number; // Polling interval in minutes
         notificationsEnabled: boolean;
+        notificationStyle: string;
         soundEnabled: boolean;
         startAtLogin: boolean;
         language: 'en' | 'tr';
@@ -35,6 +36,7 @@ const store = new Store<StoreSchema>({
         settings: {
             checkInterval: 2,
             notificationsEnabled: true,
+            notificationStyle: 'transient', // 'transient' (auto-close) or 'persistent' (stays until clicked)
             soundEnabled: true,
             startAtLogin: false,
             language: 'en'

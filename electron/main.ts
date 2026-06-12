@@ -221,13 +221,65 @@ ipcMain.handle('open-external', (_, url: string) => {
     shell.openExternal(url);
 });
 
-ipcMain.handle('show-notification', (_, { title, body, icon, silent }) => {
-    // Windows'ta ikon yolu gerekebilir veya bildirim merkezi işler
-    new Notification({
-        title,
-        body,
-        icon: getIconPath(), // Her zaman yerel güvenli ikonu kullan
-        silent: silent !== undefined ? silent : false
-    }).show();
-});
+let notificationWin: BrowserWindow | null = null;
 
+ipcMain.handle('show-notification', (_, { title, body, icon, silent, style }) => {
+    // Determine style, default to transient if not provided
+    const notifStyle = style || 'transient';
+
+    if (notifStyle === 'native') {
+        new Notification({
+            title,
+            body,
+            icon: getIconPath(),
+            silent: silent !== undefined ? silent : false
+        }).show();
+        return;
+    }
+
+    if (notificationWin) {
+        notificationWin.close();
+        notificationWin = null;
+    }
+
+    const { screen } = require('electron');
+    const { width, height } = screen.getPrimaryDisplay().workAreaSize;
+
+    notificationWin = new BrowserWindow({
+        width: 320,
+        height: 100,
+        x: width - 320 - 20, // 20px padding from right
+        y: height - 100 - 20, // 20px padding from bottom
+        frame: false,
+        transparent: true,
+        alwaysOnTop: notifStyle === 'transient', // On top if transient, behind if persistent (desktop mode)
+        skipTaskbar: true,
+        resizable: false,
+        focusable: false,
+        webPreferences: {
+            preload: join(__dirname, 'preload.js'),
+            nodeIntegration: false,
+            contextIsolation: true,
+        }
+    });
+
+    const notifUrl = process.env.VITE_DEV_SERVER_URL 
+        ? `${process.env.VITE_DEV_SERVER_URL}#/notification`
+        : `file://${join(process.env.DIST || '', 'index.html')}#/notification`;
+
+    notificationWin.loadURL(notifUrl);
+    
+    // Pass data once ready
+    ipcMain.once('notification-ready', () => {
+        notificationWin?.webContents.send('notification-data', { title, body, icon });
+    });
+
+    if (notifStyle === 'transient') {
+        setTimeout(() => {
+            if (notificationWin) {
+                notificationWin.close();
+                notificationWin = null;
+            }
+        }, 5000);
+    }
+});

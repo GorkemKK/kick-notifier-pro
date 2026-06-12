@@ -160,7 +160,8 @@ export default function App() {
                             title: `${info.username} ${lang === 'tr' ? 'Yayında!' : 'is Live!'}`,
                             body: `${info.title} - ${info.category}`,
                             icon: info.profile_pic,
-                            silent: true
+                            silent: true,
+                            style: settings?.notificationStyle || 'transient'
                         });
 
                         if (soundEnabled) {
