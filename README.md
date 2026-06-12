@@ -39,9 +39,11 @@ Many Kick users miss streams from their favorite creators because they either fo
 | :--- | :---: |
 | **Live Stream Detection** | ✅ |
 | **Native Windows Desktop Notifications** | ✅ |
+| **Custom Notification Sounds** | ✅ |
 | **Auto-Updater System (Background)** | ✅ |
 | **System Tray Integration** | ✅ |
 | **Glassmorphism UI & Dynamic Sorting** | ✅ |
+| **Precise Custom Polling Intervals** | ✅ |
 | **Verified Channel Badges & Follower Counts** | ✅ |
 | **Bilingual Support** | EN / TR |
 
