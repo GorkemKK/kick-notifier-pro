@@ -31,7 +31,10 @@ export const translations = {
         checkIntervalDesc: 'How often to check for status?',
         minutes: 'Min',
         language: 'Language',
-        languageDesc: 'Choose interface language'
+        languageDesc: 'Choose interface language',
+        notifSound: 'Notification Sound',
+        notifSoundDesc: 'Select sound to play',
+        testSound: 'Test'
     },
     tr: {
         liveStreamers: 'Şu An Canlı',
@@ -63,7 +66,10 @@ export const translations = {
         checkIntervalDesc: 'Kaç dakikada bir kontrol edilsin?',
         minutes: 'Dk',
         language: 'Dil',
-        languageDesc: 'Arayüz dilini seçin'
+        languageDesc: 'Arayüz dilini seçin',
+        notifSound: 'Bildirim Sesi',
+        notifSoundDesc: 'Çalınacak sesi seçin',
+        testSound: 'Test Et'
     }
 };
 

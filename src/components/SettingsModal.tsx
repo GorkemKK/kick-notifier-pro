@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, Globe, RefreshCw } from 'lucide-react';
+import { X, Globe, RefreshCw, Play, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { t, Language } from '../locales';
 import { clsx, type ClassValue } from 'clsx';
@@ -20,15 +20,20 @@ interface Settings {
     startAtLogin: boolean;
     checkInterval: number;
     language: Language;
+    notificationStyle?: 'transient' | 'persistent';
+    notificationSound?: string;
 }
 
 export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
+    const [soundDropdownOpen, setSoundDropdownOpen] = useState(false);
     const [settings, setSettings] = useState<Settings>({
         notificationsEnabled: true,
         soundEnabled: true,
         startAtLogin: false,
         checkInterval: 1,
-        language: 'en'
+        language: 'en',
+        notificationStyle: 'transient',
+        notificationSound: '1.mp3'
     });
     
     const [updateStatus, setUpdateStatus] = useState<string | null>(null);
@@ -104,7 +109,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                         initial={{ opacity: 0, scale: 0.95, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                        className="bg-[#14171A] border border-white/10 rounded-2xl p-6 w-[400px] shadow-2xl relative z-[101] flex flex-col max-h-[90vh]"
+                        className="bg-[#14171A]/60 backdrop-blur-xl border border-white/10 rounded-2xl p-6 w-[400px] shadow-2xl relative z-[101] flex flex-col max-h-[90vh]"
                     >
                         <div className="p-6 flex flex-col flex-1 min-h-0">
                             <div className="flex justify-between items-center mb-6 shrink-0">
@@ -116,7 +121,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 
                             <div className="space-y-4 overflow-y-auto pr-2 flex-1 min-h-0">
                                 {/* Language Toggle */}
-                                <label className="flex items-center justify-between p-4 bg-[#0B0E0F] rounded-xl border border-white/5 cursor-pointer hover:border-[#00E701]/30 transition-colors group">
+                                <label className="flex items-center justify-between p-4 bg-white/5 backdrop-blur-md rounded-xl border border-white/5 cursor-pointer hover:border-[#00E701]/30 transition-colors group">
                                     <div className="flex items-center gap-3">
                                         <Globe className="w-5 h-5 text-gray-400 group-hover:text-[#00E701] transition-colors" />
                                         <div>
@@ -140,7 +145,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                                     </div>
                                 </label>
 
-                                <label className="flex items-center justify-between p-4 bg-[#0B0E0F] rounded-xl border border-white/5 cursor-pointer hover:border-[#00E701]/30 transition-colors group">
+                                <label className="flex items-center justify-between p-4 bg-white/5 backdrop-blur-md rounded-xl border border-white/5 cursor-pointer hover:border-[#00E701]/30 transition-colors group">
                                     <div>
                                         <div className="font-medium text-white group-hover:text-[#00E701] transition-colors">{t(lang, 'notifications')}</div>
                                         <div className="text-xs text-gray-500">{t(lang, 'notificationsDesc')}</div>
@@ -154,7 +159,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                                 </label>
 
                                 {settings.notificationsEnabled && (
-                                    <label className="flex items-center justify-between p-4 bg-[#0B0E0F] rounded-xl border border-white/5 cursor-pointer hover:border-[#00E701]/30 transition-colors group ml-4 border-l-2 border-l-[#00E701]/30">
+                                    <label className="flex items-center justify-between p-4 bg-white/5 backdrop-blur-md rounded-xl border border-white/5 cursor-pointer hover:border-[#00E701]/30 transition-colors group border-l-2 border-l-[#00E701]/30">
                                         <div className="pr-4">
                                             <div className="font-medium text-white group-hover:text-[#00E701] transition-colors">{t(lang, 'notifStyle')}</div>
                                             <div className="text-xs text-gray-500">{t(lang, 'notifStyleDesc')}</div>
@@ -176,7 +181,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                                     </label>
                                 )}
 
-                                <label className="flex items-center justify-between p-4 bg-[#0B0E0F] rounded-xl border border-white/5 cursor-pointer hover:border-[#00E701]/30 transition-colors group">
+                                <label className="flex items-center justify-between p-4 bg-white/5 backdrop-blur-md rounded-xl border border-white/5 cursor-pointer hover:border-[#00E701]/30 transition-colors group">
                                     <div>
                                         <div className="font-medium text-white group-hover:text-[#00E701] transition-colors">{t(lang, 'sound')}</div>
                                         <div className="text-xs text-gray-500">{t(lang, 'soundDesc')}</div>
@@ -189,7 +194,67 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                                     </div>
                                 </label>
 
-                                <label className="flex items-center justify-between p-4 bg-[#0B0E0F] rounded-xl border border-white/5 cursor-pointer hover:border-[#00E701]/30 transition-colors group">
+                                {settings.soundEnabled && (
+                                    <div className={cn("flex items-center justify-between p-4 bg-white/5 backdrop-blur-md rounded-xl border border-white/5 group border-l-2 border-l-[#00E701]/30", soundDropdownOpen ? "relative z-50" : "")}>
+                                        <div className="pr-4">
+                                            <div className="font-medium text-white group-hover:text-[#00E701] transition-colors">{t(lang, 'notifSound')}</div>
+                                            <div className="text-xs text-gray-500">{t(lang, 'notifSoundDesc')}</div>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <div className="relative">
+                                                <button
+                                                    onClick={() => setSoundDropdownOpen(!soundDropdownOpen)}
+                                                    className="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/10 text-white text-xs rounded-md px-2 py-1.5 transition-all outline-none"
+                                                >
+                                                    {`Sound ${settings.notificationSound ? settings.notificationSound.replace('.mp3', '') : '1'}`}
+                                                    <ChevronDown className={cn("w-3 h-3 transition-transform", soundDropdownOpen && "rotate-180")} />
+                                                </button>
+                                                <AnimatePresence>
+                                                    {soundDropdownOpen && (
+                                                        <motion.div
+                                                            initial={{ opacity: 0, y: -5, scale: 0.95 }}
+                                                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                                                            exit={{ opacity: 0, y: -5, scale: 0.95 }}
+                                                            className="absolute right-0 top-full mt-1 w-32 bg-[#1A1D20]/90 backdrop-blur-xl border border-white/10 rounded-lg overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.5)] z-[999]"
+                                                        >
+                                                            <div className="max-h-48 overflow-y-auto custom-scrollbar flex flex-col py-1">
+                                                                {Array.from({ length: 10 }).map((_, i) => (
+                                                                    <button
+                                                                        key={i}
+                                                                        onClick={() => {
+                                                                            saveSettings({ ...settings, notificationSound: `${i + 1}.mp3` });
+                                                                            setSoundDropdownOpen(false);
+                                                                            const audio = new Audio(`assets/sounds/${i + 1}.mp3`);
+                                                                            audio.play().catch(e => console.error("Error playing sound:", e));
+                                                                        }}
+                                                                        className={cn(
+                                                                            "px-3 py-1.5 text-xs text-left transition-colors hover:bg-white/10",
+                                                                            settings.notificationSound === `${i + 1}.mp3` ? "text-[#00E701] font-bold bg-white/5" : "text-gray-300"
+                                                                        )}
+                                                                    >
+                                                                        Sound {i + 1}
+                                                                    </button>
+                                                                ))}
+                                                            </div>
+                                                        </motion.div>
+                                                    )}
+                                                </AnimatePresence>
+                                            </div>
+                                            <button
+                                                onClick={() => {
+                                                    const audio = new Audio(`assets/sounds/${settings.notificationSound || '1.mp3'}`);
+                                                    audio.play().catch(e => console.error("Error playing sound:", e));
+                                                }}
+                                                className="p-1.5 bg-[#00E701]/10 text-[#00E701] hover:bg-[#00E701] hover:text-black rounded-md transition-colors flex items-center gap-1"
+                                                title={t(lang, 'testSound')}
+                                            >
+                                                <Play className="w-4 h-4 fill-current" />
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+
+                                <label className="flex items-center justify-between p-4 bg-white/5 backdrop-blur-md rounded-xl border border-white/5 cursor-pointer hover:border-[#00E701]/30 transition-colors group">
                                     <div>
                                         <div className="font-medium text-white group-hover:text-[#00E701] transition-colors">{t(lang, 'startup')}</div>
                                         <div className="text-xs text-gray-500">{t(lang, 'startupDesc')}</div>
@@ -202,25 +267,24 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                                     </div>
                                 </label>
 
-                                <div className="p-4 bg-[#0B0E0F] rounded-xl border border-white/5 hover:border-[#00E701]/30 transition-colors group">
-                                    <div className="flex justify-between items-center mb-3">
-                                        <div>
-                                            <div className="font-medium text-white group-hover:text-[#00E701] transition-colors">{t(lang, 'checkInterval')}</div>
-                                            <div className="text-xs text-gray-500">{t(lang, 'checkIntervalDesc')}</div>
-                                        </div>
-                                        <div className="text-[#00E701] font-bold">{settings.checkInterval} {t(lang, 'minutes')}</div>
+                                <div className="p-4 bg-white/5 backdrop-blur-md rounded-xl border border-white/5 hover:border-[#00E701]/30 transition-colors group flex items-center justify-between">
+                                    <div>
+                                        <div className="font-medium text-white group-hover:text-[#00E701] transition-colors">{t(lang, 'checkInterval')}</div>
+                                        <div className="text-xs text-gray-500">{t(lang, 'checkIntervalDesc')}</div>
                                     </div>
-                                    <input 
-                                        type="range" 
-                                        min="1" 
-                                        max="15" 
-                                        value={settings.checkInterval || 1} 
-                                        onChange={(e) => saveSettings({ ...settings, checkInterval: parseInt(e.target.value) })}
-                                        className="w-full accent-[#00E701]"
-                                    />
-                                    <div className="flex justify-between text-[10px] text-gray-600 mt-1">
-                                        <span>1 {t(lang, 'minutes')}</span>
-                                        <span>15 {t(lang, 'minutes')}</span>
+                                    <div className="flex items-center gap-2">
+                                        <input 
+                                            type="number" 
+                                            min="1" 
+                                            max="1440"
+                                            value={settings.checkInterval || 1} 
+                                            onChange={(e) => {
+                                                const val = parseInt(e.target.value);
+                                                if (!isNaN(val) && val > 0) saveSettings({ ...settings, checkInterval: val });
+                                            }}
+                                            className="w-16 bg-white/10 text-white text-center font-bold rounded-md px-2 py-1.5 border border-white/10 outline-none focus:border-[#00E701] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none m-0"
+                                        />
+                                        <span className="text-[#00E701] font-bold text-xs">{t(lang, 'minutes')}</span>
                                     </div>
                                 </div>
                             </div>
@@ -250,7 +314,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                             </div>
 
                             <div className="mt-4 text-center text-xs text-gray-600 shrink-0">
-                                Kick Notifier Pro v1.1.5
+                                Kick Notifier Pro v1.1.6
                             </div>
                         </div>
                     </motion.div>

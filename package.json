@@ -1,6 +1,7 @@
 {
     "name": "kick-notifier-pro",
-    "version": "1.1.5",
+    "private": true,
+    "version": "1.1.6",
     "main": "dist-electron/main.js",
     "description": "Premium Kick Notification App",
     "homepage": "./",

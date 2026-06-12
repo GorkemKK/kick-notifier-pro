@@ -48,73 +48,32 @@ export default function App() {
     };
 
     /**
-     * Plays a clean notification chime.
+     * Plays the selected notification sound.
      */
-    const playNotificationSound = () => {
+    const playNotificationSound = (soundFile: string = '1.mp3') => {
         try {
-            const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-            osc.type = 'sine';
-            
-            osc.frequency.setValueAtTime(800, ctx.currentTime);
-            
-            gain.gain.setValueAtTime(0, ctx.currentTime);
-            gain.gain.linearRampToValueAtTime(0.4, ctx.currentTime + 0.02);
-            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
-            
-            osc.start(ctx.currentTime);
-            osc.stop(ctx.currentTime + 0.3);
+            const audio = new Audio(`assets/sounds/${soundFile}`);
+            audio.play().catch(e => console.error("Error playing sound:", e));
         } catch (e) {}
     };
 
     /**
-     * Plays a positive ascending sound when adding a streamer.
+     * Plays a sound when adding a streamer.
      */
-    const playAddSound = () => {
+    const playAddSound = (soundFile: string = '1.mp3') => {
         try {
-            const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-            osc.type = 'sine';
-            
-            osc.frequency.setValueAtTime(600, ctx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(900, ctx.currentTime + 0.1);
-            
-            gain.gain.setValueAtTime(0, ctx.currentTime);
-            gain.gain.linearRampToValueAtTime(0.3, ctx.currentTime + 0.01);
-            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
-            
-            osc.start(ctx.currentTime);
-            osc.stop(ctx.currentTime + 0.1);
+            const audio = new Audio(`assets/sounds/${soundFile}`);
+            audio.play().catch(e => console.error("Error playing sound:", e));
         } catch (e) {}
     };
 
     /**
-     * Plays a negative descending sound when removing a streamer.
+     * Plays the trash sound when removing a streamer.
      */
     const playRemoveSound = () => {
         try {
-            const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-            osc.type = 'triangle';
-            
-            osc.frequency.setValueAtTime(300, ctx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(100, ctx.currentTime + 0.15);
-            
-            gain.gain.setValueAtTime(0, ctx.currentTime);
-            gain.gain.linearRampToValueAtTime(0.3, ctx.currentTime + 0.01);
-            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
-            
-            osc.start(ctx.currentTime);
-            osc.stop(ctx.currentTime + 0.15);
+            const audio = new Audio(`assets/sounds/macemptytrash.mp3`);
+            audio.play().catch(e => console.error("Error playing sound:", e));
         } catch (e) {}
     };
 
@@ -176,7 +135,7 @@ export default function App() {
                         });
 
                         if (soundEnabled) {
-                            playNotificationSound();
+                            playNotificationSound(settings?.notificationSound);
                         }
                     }
                 }
@@ -229,11 +188,11 @@ export default function App() {
                     }).catch(console.error);
 
                     if (settings?.soundEnabled !== false) {
-                        playNotificationSound();
+                        playNotificationSound(settings?.notificationSound);
                     }
                 }
             } else {
-                if (settings?.soundEnabled !== false) playAddSound();
+                if (settings?.soundEnabled !== false) playAddSound(settings?.notificationSound);
             }
 
             setStreamers(prev => {

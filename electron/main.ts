@@ -194,7 +194,11 @@ app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
         // app.quit() is removed so it stays in the background
     }
-})
+});
+
+app.on('before-quit', () => {
+    app.isQuitting = true;
+});
 
 app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
@@ -288,7 +292,9 @@ ipcMain.handle('show-notification', (_, { title, body, icon, silent, style }) =>
     }
 
     if (notificationWin) {
-        notificationWin.close();
+        if (!notificationWin.isDestroyed()) {
+            notificationWin.close();
+        }
         notificationWin = null;
     }
 
