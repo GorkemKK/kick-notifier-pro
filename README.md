@@ -21,7 +21,7 @@
 - Built with **TypeScript**, **React 18** and **Electron**
 - Native Windows desktop notifications
 - Background auto-update system
-- Singleton window architecture for efficient API polling
+- Concurrent Web Worker Pool architecture for blazingly fast API polling
 
 ---
 
@@ -45,6 +45,8 @@ Many Kick users miss streams from their favorite creators because they either fo
 | **Glassmorphism UI & Dynamic Sorting** | ✅ |
 | **Precise Custom Polling Intervals** | ✅ |
 | **Verified Channel Badges & Follower Counts** | ✅ |
+| **Kick Account Synchronization** | ✅ |
+| **Streamer Muting & Memory List** | ✅ |
 | **Bilingual Support** | EN / TR |
 
 ---
@@ -82,7 +84,7 @@ Get the latest version and start tracking your favorite streamers immediately!
 
 ## Architecture
 
-The app uses a **Singleton `BrowserWindow` Queue Mechanism** to fetch data from Kick's API securely without triggering Cloudflare blocks, while reusing a single background window instance to prevent out-of-memory (OOM) errors.
+The app uses a **Concurrent Web Worker Pool Mechanism** to fetch data from Kick's API securely without triggering Cloudflare blocks, while reusing a limited pool of background windows to prevent out-of-memory (OOM) errors and drastically speed up synchronization.
 
 ```mermaid
 graph TD;
