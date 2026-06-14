@@ -80,9 +80,9 @@ Get the latest version and start tracking your favorite streamers immediately!
   <br />
   <img width="315" height="276" alt="image" src="https://github.com/user-attachments/assets/e4e9254c-3a32-4a33-ad96-4d077303d948" />
   <img width="338" height="302" alt="image" src="https://github.com/user-attachments/assets/9bf9cf43-91e3-4f19-b002-4b5b399465c4" />
-  <img width="309" height="86" alt="image" src="https://github.com/user-attachments/assets/4427d4b1-64c5-4827-902c-3a90368cc103" />
-  <img width="227" height="155" alt="image" src="https://github.com/user-attachments/assets/124abc33-60ad-4e8d-9738-2714ea6f2130" />
   <img width="241" height="368" alt="image" src="https://github.com/user-attachments/assets/2733b04f-f8b3-4378-82cd-34b7f8207ad3" />
+  <img width="227" height="155" alt="image" src="https://github.com/user-attachments/assets/124abc33-60ad-4e8d-9738-2714ea6f2130" />
+  <img width="309" height="86" alt="image" src="https://github.com/user-attachments/assets/4427d4b1-64c5-4827-902c-3a90368cc103" />
 </details>
 
 ---
