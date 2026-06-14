@@ -109,19 +109,19 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                         initial={{ opacity: 0, scale: 0.95, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                        className="bg-[#14171A]/60 backdrop-blur-xl border border-white/10 rounded-2xl p-6 w-[400px] shadow-2xl relative z-[101] flex flex-col max-h-[90vh]"
+                        className="bg-[#14171A]/60 backdrop-blur-xl border border-white/10 rounded-2xl p-4 w-[800px] max-w-[95vw] shadow-2xl relative z-[101] flex flex-col max-h-[90vh]"
                     >
-                        <div className="p-6 flex flex-col flex-1 min-h-0">
-                            <div className="flex justify-between items-center mb-6 shrink-0">
+                        <div className="p-4 flex flex-col flex-1 min-h-0">
+                            <div className="flex justify-between items-center mb-4 shrink-0">
                                 <h2 className="text-xl font-bold text-white">{t(lang, 'settings')}</h2>
                                 <button onClick={onClose} className="p-2 hover:bg-white/5 rounded-lg text-gray-400 hover:text-white transition-colors shrink-0">
                                     <X className="w-5 h-5" />
                                 </button>
                             </div>
 
-                            <div className="space-y-4 overflow-y-auto pr-2 flex-1 min-h-0">
+                            <div className="grid grid-cols-2 gap-3 overflow-y-auto pr-2 flex-1 min-h-0 custom-scrollbar">
                                 {/* Language Toggle */}
-                                <label className="flex items-center justify-between p-4 bg-white/5 backdrop-blur-md rounded-xl border border-white/5 cursor-pointer hover:border-[#00E701]/30 transition-colors group">
+                                <label className="flex items-center justify-between p-3 bg-white/5 backdrop-blur-md rounded-xl border border-white/5 cursor-pointer hover:border-[#00E701]/30 transition-colors group">
                                     <div className="flex items-center gap-3">
                                         <Globe className="w-5 h-5 text-gray-400 group-hover:text-[#00E701] transition-colors" />
                                         <div>
@@ -145,7 +145,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                                     </div>
                                 </label>
 
-                                <label className="flex items-center justify-between p-4 bg-white/5 backdrop-blur-md rounded-xl border border-white/5 cursor-pointer hover:border-[#00E701]/30 transition-colors group">
+                                <label className="flex items-center justify-between p-3 bg-white/5 backdrop-blur-md rounded-xl border border-white/5 cursor-pointer hover:border-[#00E701]/30 transition-colors group">
                                     <div>
                                         <div className="font-medium text-white group-hover:text-[#00E701] transition-colors">{t(lang, 'notifications')}</div>
                                         <div className="text-xs text-gray-500">{t(lang, 'notificationsDesc')}</div>
@@ -181,7 +181,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                                     </label>
                                 )}
 
-                                <label className="flex items-center justify-between p-4 bg-white/5 backdrop-blur-md rounded-xl border border-white/5 cursor-pointer hover:border-[#00E701]/30 transition-colors group">
+                                <label className="flex items-center justify-between p-3 bg-white/5 backdrop-blur-md rounded-xl border border-white/5 cursor-pointer hover:border-[#00E701]/30 transition-colors group">
                                     <div>
                                         <div className="font-medium text-white group-hover:text-[#00E701] transition-colors">{t(lang, 'sound')}</div>
                                         <div className="text-xs text-gray-500">{t(lang, 'soundDesc')}</div>
@@ -254,7 +254,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                                     </div>
                                 )}
 
-                                <label className="flex items-center justify-between p-4 bg-white/5 backdrop-blur-md rounded-xl border border-white/5 cursor-pointer hover:border-[#00E701]/30 transition-colors group">
+                                <label className="flex items-center justify-between p-3 bg-white/5 backdrop-blur-md rounded-xl border border-white/5 cursor-pointer hover:border-[#00E701]/30 transition-colors group">
                                     <div>
                                         <div className="font-medium text-white group-hover:text-[#00E701] transition-colors">{t(lang, 'startup')}</div>
                                         <div className="text-xs text-gray-500">{t(lang, 'startupDesc')}</div>
@@ -267,33 +267,34 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                                     </div>
                                 </label>
 
-                                <div className="p-4 bg-white/5 backdrop-blur-md rounded-xl border border-white/5 hover:border-[#00E701]/30 transition-colors group flex items-center justify-between">
+                                {/* Check Interval */}
+                                <div className="col-span-2 flex items-center justify-between p-3 bg-white/5 backdrop-blur-md rounded-xl border border-white/5 hover:border-[#00E701]/30 transition-colors group">
                                     <div>
                                         <div className="font-medium text-white group-hover:text-[#00E701] transition-colors">{t(lang, 'checkInterval')}</div>
                                         <div className="text-xs text-gray-500">{t(lang, 'checkIntervalDesc')}</div>
                                     </div>
-                                    <div className="flex items-center gap-2">
-                                        <input 
-                                            type="number" 
-                                            min="1" 
-                                            max="1440"
-                                            value={settings.checkInterval || 1} 
+                                    <div className="flex items-center gap-3">
+                                        <input
+                                            type="number"
+                                            min="1"
+                                            max="60"
+                                            value={settings.checkInterval}
                                             onChange={(e) => {
                                                 const val = parseInt(e.target.value);
                                                 if (!isNaN(val) && val > 0) saveSettings({ ...settings, checkInterval: val });
                                             }}
-                                            className="w-16 bg-white/10 text-white text-center font-bold rounded-md px-2 py-1.5 border border-white/10 outline-none focus:border-[#00E701] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none m-0"
+                                            className="w-16 px-3 py-1.5 bg-black/50 border border-white/10 rounded-lg text-white text-center focus:outline-none focus:border-[#00E701]/50 transition-colors"
                                         />
-                                        <span className="text-[#00E701] font-bold text-xs">{t(lang, 'minutes')}</span>
+                                        <span className="text-sm font-medium text-[#00E701]">Dk</span>
                                     </div>
                                 </div>
                             </div>
-
-                            <div className="mt-6 border-t border-white/5 pt-4">
+                            
+                            <div className="mt-4 flex gap-3 pt-4 border-t border-white/5 shrink-0">
                                 {updateStatus !== 'Ready' ? (
                                     <button
                                         onClick={() => window.ipcRenderer.send('check-for-updates')}
-                                        className="w-full py-2.5 bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white rounded-xl transition-colors text-sm font-medium flex items-center justify-center gap-2"
+                                        className="flex-1 p-3 bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white rounded-xl transition-colors text-sm font-medium flex items-center justify-center gap-2"
                                     >
                                         <RefreshCw className={cn("w-4 h-4", updateStatus?.includes('ndiriliyor') || updateStatus?.includes('ownloading') ? "animate-spin text-[#00E701]" : "")} />
                                         {updateStatus || (lang === 'tr' ? 'Güncellemeleri Kontrol Et' : 'Check for Updates')}
@@ -301,7 +302,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                                 ) : (
                                     <button
                                         onClick={() => window.ipcRenderer.send('install-update')}
-                                        className="w-full py-2.5 bg-[#00E701] hover:bg-[#00E701]/90 text-black rounded-xl transition-colors text-sm font-bold flex items-center justify-center gap-2 animate-pulse"
+                                        className="w-full p-3 bg-[#00E701] hover:bg-[#00E701]/90 text-black rounded-xl transition-colors text-sm font-bold flex items-center justify-center gap-2 animate-pulse"
                                     >
                                         {lang === 'tr' ? 'Güncelle ve Yeniden Başlat' : 'Update & Restart'}
                                     </button>
@@ -314,7 +315,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                             </div>
 
                             <div className="mt-4 text-center text-xs text-gray-600 shrink-0">
-                                Kick Notifier Pro v1.1.6
+                                Kick Notifier Pro v1.1.7
                             </div>
                         </div>
                     </motion.div>

@@ -1,8 +1,6 @@
 import Store from 'electron-store';
 
-/**
- * Interface representing a Streamer object stored in the application.
- */
+
 interface Streamer {
     slug: string;
     username: string;
@@ -14,15 +12,14 @@ interface Streamer {
     category?: string;
     followers?: number;
     is_verified?: boolean;
+    is_muted?: boolean;
 }
 
-/**
- * Schema definition for the local electron-store config.
- */
+
 interface StoreSchema {
     streamers: Streamer[];
     settings: {
-        checkInterval: number; // Polling interval in minutes
+        checkInterval: number; 
         notificationsEnabled: boolean;
         notificationStyle: string;
         soundEnabled: boolean;
@@ -31,14 +28,14 @@ interface StoreSchema {
     };
 }
 
-// Initialize the store with default English language
+
 const store = new Store<StoreSchema>({
     defaults: {
         streamers: [],
         settings: {
             checkInterval: 2,
             notificationsEnabled: true,
-            notificationStyle: 'transient', // 'transient' (auto-close) or 'persistent' (stays until clicked)
+            notificationStyle: 'transient', 
             soundEnabled: true,
             startAtLogin: false,
             language: 'en'

@@ -1,16 +1,16 @@
-// ... (imports)
+
 import { app, BrowserWindow, ipcMain, Notification, shell, Tray, Menu, nativeImage } from 'electron'
 import { join } from 'node:path'
 import { autoUpdater } from 'electron-updater';
 import { getStreamerInfo } from './api';
 
-// Window Controls
+
 ipcMain.on('window-minimize', () => {
     win?.minimize();
 });
 
 ipcMain.on('window-close', () => {
-    // Hide to tray if tray exists, otherwise quit
+    
     if (tray) {
         win?.hide();
     } else {
@@ -25,7 +25,7 @@ process.env.DIST = join(__dirname, '../dist')
 process.env.PUBLIC = app.isPackaged ? process.env.DIST : join(process.env.DIST, '../public')
 
 let win: BrowserWindow | null = null
-let tray: Tray | null = null // Tray reference
+let tray: Tray | null = null 
 
 const preload = join(__dirname, 'preload.js')
 const url = process.env.VITE_DEV_SERVER_URL || 'http://localhost:5185'
@@ -42,7 +42,7 @@ function createWindow() {
 
     win = new BrowserWindow({
         title: 'Kick Notifier Pro',
-        icon: iconImage, // Use nativeImage for crisp scaling
+        icon: iconImage, 
         frame: false,
         width: 1000,
         height: 700,
@@ -51,9 +51,9 @@ function createWindow() {
             preload,
             nodeIntegration: false,
             contextIsolation: true,
-            backgroundThrottling: false, // Prevent timer throttling when minimized
+            backgroundThrottling: false, 
         },
-        skipTaskbar: false, // Ensure visibility in taskbar
+        skipTaskbar: false, 
         autoHideMenuBar: true,
     })
 
@@ -63,7 +63,7 @@ function createWindow() {
         win.loadFile(indexHtml)
     }
 
-    // Hide window on close (e.g., Alt+F4 or Taskbar close) instead of quitting
+    
     win.on('close', (event) => {
         if (!app.isQuitting) {
             event.preventDefault();
@@ -74,7 +74,7 @@ function createWindow() {
     });
 
     win.webContents.setWindowOpenHandler(({ url }) => {
-        // Open external links securely in the default browser
+        
         if (url.startsWith('https:')) {
             shell.openExternal(url);
         }
@@ -86,8 +86,8 @@ function createTray() {
     const iconPath = getIconPath();
     const iconImage = nativeImage.createFromPath(iconPath);
 
-    // Remove existsSync check as createFromPath handles missing files gracefully
-    // If the icon is missing, the tray will be blank but the app won't crash
+    
+    
     try {
         tray = new Tray(iconImage);
 
@@ -101,7 +101,7 @@ function createTray() {
                 label: 'Quit',
                 click: () => {
                     app.isQuitting = true;
-                    // Force close all windows and exit
+                    
                     app.quit();
                 }
             }
@@ -122,7 +122,7 @@ function createTray() {
     }
 }
 
-// Global variable to track quitting state
+
 declare global {
     namespace Electron {
         interface App {
@@ -131,11 +131,11 @@ declare global {
     }
 }
 
-// Initialize quitting state
+
 app.isQuitting = false;
 
 app.whenReady().then(() => {
-    // AppUserModelId is required for Windows Toast notifications to work
+    
     app.setAppUserModelId('com.kicknotifier.pro');
     
     createWindow();
@@ -164,7 +164,7 @@ app.whenReady().then(() => {
             win?.webContents.send('update-error', err.message);
         });
 
-        // Trigger first check
+        
         autoUpdater.checkForUpdatesAndNotify();
     }
 });
@@ -190,9 +190,9 @@ ipcMain.on('install-update', () => {
 });
 
 app.on('window-all-closed', () => {
-    // Do not quit on window close; keep running in tray
+    
     if (process.platform !== 'darwin') {
-        // app.quit() is removed so it stays in the background
+        
     }
 });
 
@@ -206,14 +206,14 @@ app.on('activate', () => {
     }
 });
 
-// IPC handlers (API'den gelenler)
+
 import store from './store';
 
 ipcMain.handle('get-streamers', () => {
     return store.get('streamers') || [];
 });
 
-ipcMain.handle('add-streamer', async (_, slug: string) => {
+ipcMain.handle('add-streamer', async (_, slug: string, isMuted: boolean = false) => {
     const info = await getStreamerInfo(slug);
     if (!info) {
         throw new Error('Yayıncı bulunamadı');
@@ -230,11 +230,12 @@ ipcMain.handle('add-streamer', async (_, slug: string) => {
             title: info.title,
             category: info.category,
             followers: info.followers,
-            is_verified: info.is_verified
+            is_verified: info.is_verified,
+            is_muted: isMuted
         });
         store.set('streamers', streamers);
     }
-    return info;
+    return { ...info, is_muted: isMuted };
 });
 
 ipcMain.handle('remove-streamer', (_, slug: string) => {
@@ -253,6 +254,314 @@ ipcMain.handle('get-streamer-info', async (_, slug: string) => {
     return await getStreamerInfo(slug);
 });
 
+import { searchStreamers } from './api';
+
+ipcMain.handle('search-streamers', async (_, query: string) => {
+    return await searchStreamers(query);
+});
+
+ipcMain.on('kick-login-sync', (event) => {
+    const loginWin = new BrowserWindow({
+        width: 600,
+        height: 800,
+        show: true,
+        webPreferences: {
+            nodeIntegration: false,
+            contextIsolation: true,
+            partition: 'persist:kick'
+        }
+    });
+
+    
+    const userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:115.0) Gecko/20100101 Firefox/115.0';
+    loginWin.webContents.setUserAgent(userAgent);
+    
+    loginWin.loadURL('https://kick.com/login');
+
+    const fullChannels: any[] = [];
+    const seen = new Set<string>();
+    let interceptedUserProfile: { username: string, profile_pic: string } | null = null;
+
+    
+    try {
+        loginWin.webContents.debugger.attach('1.3');
+        loginWin.webContents.debugger.sendCommand('Network.enable');
+        
+        loginWin.webContents.debugger.on('message', async (debuggerEvent, method, params) => {
+            if (method === 'Network.responseReceived') {
+                const responseUrl = params.response.url;
+                
+                
+                if (responseUrl.includes('/api/v1/user') && !responseUrl.includes('users/')) {
+                    try {
+                        const responseBody = await loginWin.webContents.debugger.sendCommand('Network.getResponseBody', { requestId: params.requestId });
+                        if (responseBody && responseBody.body) {
+                            const data = JSON.parse(responseBody.body);
+                            if (data && data.username) {
+                                interceptedUserProfile = {
+                                    username: data.username,
+                                    profile_pic: data.profile_pic || data.profilePic || data.profile_image_url || data.avatar || ''
+                                };
+                            }
+                        }
+                    } catch(e) {}
+                } else if (responseUrl.includes('/api/') && (responseUrl.includes('channel') || responseUrl.includes('following') || responseUrl.includes('users'))) {
+                    try {
+                        const responseBody = await loginWin.webContents.debugger.sendCommand('Network.getResponseBody', { requestId: params.requestId });
+                        if (responseBody && responseBody.body) {
+                            const text = responseBody.body;
+                            if (text.includes('slug')) {
+                                const data = JSON.parse(text);
+                                
+                                let items = [];
+                                if (Array.isArray(data)) items = data;
+                                else if (data.data && Array.isArray(data.data)) items = data.data;
+                                else if (data.channels && Array.isArray(data.channels)) items = data.channels;
+                                
+                                for (const item of items) {
+                                    const slug = item.slug || (item.channel && item.channel.slug);
+                                    if (slug && !seen.has(slug)) {
+                                        seen.add(slug);
+                                        
+                                        const channelObj = item.channel || item;
+                                        const userObj = channelObj.user || item.user || channelObj;
+                                        const livestream = channelObj.livestream || item.livestream;
+                                        
+                                        fullChannels.push({
+                                            slug: slug,
+                                            username: userObj.username || slug,
+                                            is_live: !!livestream,
+                                            viewers: livestream ? livestream.viewer_count : 0,
+                                            profile_pic: userObj.profile_pic || userObj.profilePic || '',
+                                            category: livestream?.categories?.[0]?.name || 'Offline',
+                                            title: livestream?.session_title || '',
+                                            followers: channelObj.followers_count || channelObj.followersCount || userObj.followers_count || 0,
+                                            is_verified: !!(channelObj.verified?.status === 'approved' || channelObj.is_verified || userObj.is_verified)
+                                        });
+                                    }
+                                }
+                            }
+                        }
+                    } catch (err) {}
+                }
+            }
+        });
+    } catch (err) {
+        console.error('Debugger attach failed', err);
+    }
+
+    let syncDone = false;
+    const checkLogin = setInterval(async () => {
+        if (loginWin.isDestroyed()) {
+            clearInterval(checkLogin);
+            if (!syncDone) event.reply('kick-sync-results', null);
+            return;
+        }
+
+        try {
+            const result = await loginWin.webContents.executeJavaScript(`
+                (function() {
+                    const avatar = document.querySelector('img.rounded-full');
+                    const isFollowingPage = window.location.href.includes('kick.com/following/channels');
+                    return { hasAvatar: !!avatar, isFollowingPage };
+                })();
+            `);
+
+            if (result.hasAvatar && !result.isFollowingPage && !syncDone) {
+                loginWin.loadURL('https://kick.com/following/channels');
+                return;
+            }
+
+            if (result.isFollowingPage && !syncDone) {
+                syncDone = true;
+                clearInterval(checkLogin);
+                
+                
+                
+                
+                loginWin.setOpacity(0.01);
+                loginWin.setIgnoreMouseEvents(true);
+                
+                setTimeout(async () => {
+                    if (loginWin.isDestroyed()) return;
+                    try {
+                        const result = await loginWin.webContents.executeJavaScript(`
+                            (async function() {
+                                
+                                let myUsername = 'User';
+                                let myProfilePic = '';
+                                
+                                try {
+                                    
+                                    const avatar = document.querySelector('button[id^="user-menu"] img') || document.querySelector('img.rounded-full');
+                                    if (avatar) {
+                                        myProfilePic = avatar.src || '';
+                                        myUsername = avatar.alt || 'User';
+                                    }
+                                } catch(e) {}
+
+                                
+                                await new Promise(r => setTimeout(r, 2000)); 
+                                return {
+                                    myUsername,
+                                    myProfilePic,
+                                };
+                            })();
+                        `);
+
+                        
+                        
+                        let domChannels: any[] = [];
+                        try {
+                            const domResult = await loginWin.webContents.executeJavaScript(`
+                                (async function() {
+                                    const collectedData = new Map();
+                                    
+                                    const harvestSlugs = () => {
+                                        const cards = Array.from(document.querySelectorAll('a[href^="/"]'));
+                                        for (const a of cards) {
+                                            const href = a.getAttribute('href');
+                                            if (href && href.startsWith('/') && href.lastIndexOf('/') === 0) {
+                                                const slug = href.substring(1);
+                                                const blacklist = ['following', 'browse', 'dashboard', 'login', 'signup', 'categories', 'leaderboards', 'about', 'help', 'terms-of-service', 'privacy-policy', 'network'];
+                                                if (slug && !slug.includes('?') && !slug.includes('#') && !blacklist.includes(slug.toLowerCase())) {
+                                                    const img = a.querySelector('img');
+                                                    if (img || a.querySelector('.avatar') || a.closest('.grid')) {
+                                                        if (!collectedData.has(slug)) {
+                                                            collectedData.set(slug, {
+                                                                slug: slug,
+                                                                username: img ? (img.alt || slug) : slug,
+                                                                profile_pic: img ? img.src : '',
+                                                                is_live: false, 
+                                                                viewers: 0
+                                                            });
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    };
+
+                                    const triggerScroll = () => {
+                                        try {
+                                            
+                                            
+                                            document.documentElement.scrollTop += 800;
+                                            document.body.scrollTop += 800;
+                                            window.scrollBy(0, 800);
+                                            
+                                            
+                                            const divs = document.querySelectorAll('div');
+                                            for (let i = 0; i < divs.length; i++) {
+                                                const el = divs[i];
+                                                if (el.scrollHeight > el.clientHeight + 10) {
+                                                    el.scrollTop += 800;
+                                                }
+                                            }
+                                        } catch (e) {}
+                                    };
+
+                                    for(let i=0; i<30; i++) {
+                                        harvestSlugs();
+                                        triggerScroll();
+                                        
+                                        try {
+                                            const cards = Array.from(document.querySelectorAll('a[href^="/"]')).filter(a => {
+                                                const href = a.getAttribute('href');
+                                                if (!href || href.split('/').length > 2) return false;
+                                                return a.querySelector('img') || a.querySelector('.avatar') || a.closest('.grid');
+                                            });
+                                            if (cards.length > 0) {
+                                                const lastCard = cards[cards.length - 1];
+                                                
+                                                lastCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                                
+                                                
+                                                lastCard.focus();
+                                                lastCard.dispatchEvent(new KeyboardEvent('keydown', { key: 'End', code: 'End', keyCode: 35, which: 35, bubbles: true }));
+                                            }
+                                        } catch(e) {}
+                                        
+                                        await new Promise(r => setTimeout(r, 800));
+                                    }
+                                    
+                                    harvestSlugs();
+                                    return Array.from(collectedData.values());
+                                })();
+                            `);
+                            if (Array.isArray(domResult)) {
+                                domChannels = domResult;
+                            }
+                        } catch(e) {}
+
+                        
+                        await new Promise(r => setTimeout(r, 1500));
+
+                        
+                        
+                        const finalChannels = [...fullChannels.filter(c => c && c.slug), ...domChannels.filter(c => c && c.slug)];
+                        
+                        
+                        const safeCloseWin = () => {
+                            if (loginWin && !loginWin.isDestroyed()) {
+                                loginWin.close();
+                            }
+                        };
+                        
+                        
+                        if (finalChannels.length === 0) {
+                            safeCloseWin();
+                            if (result && result.myUsername) {
+                                event.reply('kick-sync-results', {
+                                    channels: [],
+                                    user: { username: result.myUsername, profilePic: result.myProfilePic }
+                                });
+                                return;
+                            }
+                            event.reply('kick-sync-results', { error: 'Takip edilen kanal bulunamadı.' });
+                            return;
+                        }
+
+                        
+                        const uniqueMap = new Map();
+                        
+                        
+                        domChannels.forEach(c => {
+                            if (c && c.slug) uniqueMap.set(c.slug, c);
+                        });
+                        
+                        
+                        fullChannels.forEach(c => {
+                            if (c && c.slug) uniqueMap.set(c.slug, c);
+                        });
+                        
+                        const uniqueChannels = Array.from(uniqueMap.values());
+                        
+                        safeCloseWin();
+                        event.reply('kick-sync-results', { 
+                            channels: uniqueChannels,
+                            user: interceptedUserProfile || { username: result?.myUsername || '', profile_pic: result?.myProfilePic || '' }
+                        });
+                    } catch (e) {
+                        if (loginWin && !loginWin.isDestroyed()) loginWin.close();
+                        event.reply('kick-sync-results', { user: null, channels: [] });
+                    }
+                }, 4000);
+            }
+        } catch (err) {}
+    }, 1000);
+});
+
+ipcMain.handle('kick-logout', async () => {
+    try {
+        const { session } = require('electron');
+        const kickSession = session.defaultSession;
+        await kickSession.clearStorageData({ origin: 'https://kick.com' });
+        return true;
+    } catch (e) {
+        return false;
+    }
+});
 ipcMain.handle('get-settings', () => {
     return store.get('settings');
 });
@@ -260,7 +569,7 @@ ipcMain.handle('get-settings', () => {
 ipcMain.handle('set-settings', (_, settings) => {
     store.set('settings', settings);
     
-    // İşletim sisteminde Başlangıçta Çalıştır ayarını uygula
+    
     if (settings.startAtLogin !== undefined) {
         app.setLoginItemSettings({
             openAtLogin: settings.startAtLogin,
@@ -278,7 +587,7 @@ ipcMain.handle('open-external', (_, url: string) => {
 let notificationWin: BrowserWindow | null = null;
 
 ipcMain.handle('show-notification', (_, { title, body, icon, silent, style }) => {
-    // Determine style, default to transient if not provided
+    
     const notifStyle = style || 'transient';
 
     if (notifStyle === 'native') {
@@ -305,11 +614,11 @@ ipcMain.handle('show-notification', (_, { title, body, icon, silent, style }) =>
     notificationWin = new BrowserWindow({
         width: 320,
         height: 100,
-        x: x + width - 320 - 20, // 20px padding from right on the active monitor
-        y: y + height - 100 - 20, // 20px padding from bottom on the active monitor
+        x: x + width - 320 - 20, 
+        y: y + height - 100 - 20, 
         frame: false,
         transparent: true,
-        alwaysOnTop: notifStyle === 'transient', // On top if transient, behind if persistent (desktop mode)
+        alwaysOnTop: notifStyle === 'transient', 
         skipTaskbar: true,
         resizable: false,
         focusable: false,
@@ -326,7 +635,7 @@ ipcMain.handle('show-notification', (_, { title, body, icon, silent, style }) =>
         notificationWin.loadFile(join(process.env.DIST || '', 'index.html'), { search: 'mode=notification' });
     }
     
-    // Pass data once ready
+    
     ipcMain.once('notification-ready', () => {
         notificationWin?.webContents.send('notification-data', { title, body, icon });
     });
