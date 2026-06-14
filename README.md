@@ -67,18 +67,22 @@ Get the latest version and start tracking your favorite streamers immediately!
 ## Screenshots
 
 <div align="center">
-  <img width="992" height="693" alt="image" src="https://github.com/user-attachments/assets/2f1db52d-df22-4fbf-8d0a-628c21868024" />
+  <img width="986" height="686" alt="image" src="https://github.com/user-attachments/assets/0b73f43d-7e9f-4cb2-a199-b6cdeee2534b" />
 </div>
 
 <details>
 <summary>Click to see more screenshots</summary>
 <br>
-  <img width="986" height="696" alt="image" src="https://github.com/user-attachments/assets/c6e499dc-a856-406c-a793-345e5ac01ef9" />
-  <img width="404" height="909" alt="image" src="https://github.com/user-attachments/assets/6904045c-67b2-4e5d-97ee-1159163b3eb8" />
+  <img width="990" height="689" alt="image" src="https://github.com/user-attachments/assets/219dc7ce-89e4-4cc6-a180-4d5fc4659362" />
+  <img width="989" height="686" alt="image" src="https://github.com/user-attachments/assets/ae23fbbc-c6cd-4e20-8657-f773aca0e354" />
+  <img width="991" height="695" alt="image" src="https://github.com/user-attachments/assets/abaa5a3e-eff4-457d-bb39-d152abf070df" /> 
+  <img width="994" height="689" alt="image" src="https://github.com/user-attachments/assets/9091fc3d-721a-4fcd-963e-fe9d9c41e0e5" />
   <br />
-  <img width="332" height="291" alt="image" src="https://github.com/user-attachments/assets/31fdad5c-0562-4973-8095-cc3abe0ade8e" /> 
-  <img width="333" height="290" alt="image" src="https://github.com/user-attachments/assets/aa3380ee-8e52-46ee-848e-6ea331bb274c" /> 
-  <img width="309" height="87" alt="image" src="https://github.com/user-attachments/assets/046b2243-a2f5-4f77-840e-dad37c4c529e" />
+  <img width="315" height="276" alt="image" src="https://github.com/user-attachments/assets/e4e9254c-3a32-4a33-ad96-4d077303d948" />
+  <img width="338" height="302" alt="image" src="https://github.com/user-attachments/assets/9bf9cf43-91e3-4f19-b002-4b5b399465c4" />
+  <img width="309" height="86" alt="image" src="https://github.com/user-attachments/assets/4427d4b1-64c5-4827-902c-3a90368cc103" />
+  <img width="227" height="155" alt="image" src="https://github.com/user-attachments/assets/124abc33-60ad-4e8d-9738-2714ea6f2130" />
+  <img width="241" height="368" alt="image" src="https://github.com/user-attachments/assets/2733b04f-f8b3-4378-82cd-34b7f8207ad3" />
 </details>
 
 ---
@@ -141,7 +145,7 @@ kick-notifier-pro/
 - [x] Auto-updater background engine
 - [x] Verified channel badges & follower counts
 - [x] Launch on startup option
-- [ ] Kick account integration to automatically sync followed channels
+- [x] Kick account integration to automatically sync followed channels
 - [ ] Notification history log
 - [ ] Discord Webhook support for automatic server announcements
 - [ ] Cross-platform support (macOS & Linux binaries)
