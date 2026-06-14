@@ -46,6 +46,7 @@ Many Kick users miss streams from their favorite creators because they either fo
 | **Precise Custom Polling Intervals** | ✅ |
 | **Verified Channel Badges & Follower Counts** | ✅ |
 | **Kick Account Synchronization** | ✅ |
+| **Live Search Auto-Suggestions** | ✅ |
 | **Streamer Muting & Memory List** | ✅ |
 | **Bilingual Support** | EN / TR |
 
