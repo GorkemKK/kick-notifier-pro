@@ -74,5 +74,5 @@ export const translations = {
 };
 
 export const t = (lang: Language, key: keyof typeof translations.en) => {
-    return translations[lang][key] || translations.en[key];
+    return translations[lang][key] ?? translations.en[key];
 };

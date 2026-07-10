@@ -13,6 +13,7 @@ dist-ssr
 !.vscode/extensions.json
 .idea
 .DS_Store
+Thumbs.db
 
 # Electron
 dist-electron/
@@ -24,3 +25,11 @@ release/
 *.rpm
 *.zip
 *.tar.gz
+*.blockmap
+
+# Debug/test files
+scratch/
+
+# Environment
+.env
+.env.*

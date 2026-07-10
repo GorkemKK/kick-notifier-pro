@@ -68,9 +68,7 @@ function createWindow() {
         if (!app.isQuitting) {
             event.preventDefault();
             win?.hide();
-            return false;
         }
-        return true;
     });
 
     win.webContents.setWindowOpenHandler(({ url }) => {
@@ -213,7 +211,7 @@ ipcMain.handle('get-streamers', () => {
 ipcMain.handle('add-streamer', async (_, slug: string, isMuted: boolean = false) => {
     const info = await getStreamerInfo(slug);
     if (!info) {
-        throw new Error('Yayıncı bulunamadı');
+        throw new Error('Streamer not found');
     }
 
     const streamers = store.get('streamers') || [];
@@ -306,7 +304,7 @@ ipcMain.on('kick-login-sync', (event) => {
                                 };
                             }
                         }
-                    } catch(e) {}
+                    } catch(e) { console.error('Failed to parse user profile:', e); }
                 } else if (responseUrl.includes('/api/') && (responseUrl.includes('channel') || responseUrl.includes('following') || responseUrl.includes('users'))) {
                     try {
                         const responseBody = await loginWin.webContents.debugger.sendCommand('Network.getResponseBody', { requestId: params.requestId });
@@ -344,7 +342,7 @@ ipcMain.on('kick-login-sync', (event) => {
                                 }
                             }
                         }
-                    } catch (err) {}
+                    } catch (err) { console.error('Failed to parse channel data:', err); }
                 }
             }
         });
@@ -566,7 +564,7 @@ ipcMain.on('kick-login-sync', (event) => {
                     }
                 }, 4000);
             }
-        } catch (err) {}
+        } catch (err) { console.error('Login check error:', err); }
     }, 1000);
 });
 

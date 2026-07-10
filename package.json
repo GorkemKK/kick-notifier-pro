@@ -1,9 +1,20 @@
 {
     "name": "kick-notifier-pro",
     "private": true,
-    "version": "1.1.7",
+    "version": "1.1.8",
+    "type": "module",
     "main": "dist-electron/main.js",
     "description": "Premium Kick Notification App",
+    "author": "GorkemKK",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/GorkemKK/kick-notifier-pro.git"
+    },
+    "bugs": {
+        "url": "https://github.com/GorkemKK/kick-notifier-pro/issues"
+    },
+    "keywords": ["kick", "streamer", "notification", "electron", "desktop"],
     "homepage": "./",
     "build": {
         "appId": "com.kicknotifier.pro",
@@ -24,7 +35,6 @@
         "files": [
             "dist/**/*",
             "dist-electron/**/*",
-            "electron/**/*",
             "package.json"
         ],
         "directories": {

@@ -2,12 +2,7 @@ import { useState, useEffect } from 'react';
 import { X, Globe, RefreshCw, Play, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { t, Language } from '../locales';
-import { clsx, type ClassValue } from 'clsx';
-import { twMerge } from 'tailwind-merge';
-
-function cn(...inputs: ClassValue[]) {
-    return twMerge(clsx(inputs));
-}
+import { cn } from '../utils/cn';
 
 interface SettingsModalProps {
     isOpen: boolean;
@@ -315,7 +310,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                             </div>
 
                             <div className="mt-4 text-center text-xs text-gray-600 shrink-0">
-                                Kick Notifier Pro v1.1.7
+                                Kick Notifier Pro v1.1.8
                             </div>
                         </div>
                     </motion.div>

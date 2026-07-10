@@ -1,13 +1,8 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Trash2, Settings, Users, MonitorPlay, Wifi, RefreshCw, X, ExternalLink, ChevronDown, Bell, BellOff, Info } from 'lucide-react';
-import { clsx, type ClassValue } from 'clsx';
-import { twMerge } from 'tailwind-merge';
 import { t, Language } from './locales';
-
-function cn(...inputs: ClassValue[]) {
-    return twMerge(clsx(inputs));
-}
+import { cn } from './utils/cn';
 
 interface Streamer {
     slug: string;
