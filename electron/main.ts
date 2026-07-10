@@ -1,5 +1,5 @@
 
-import { app, BrowserWindow, ipcMain, Notification, shell, Tray, Menu, nativeImage } from 'electron'
+import { app, BrowserWindow, ipcMain, Notification, shell, Tray, Menu, nativeImage, session } from 'electron'
 import { join } from 'node:path'
 import { autoUpdater } from 'electron-updater';
 import { getStreamerInfo } from './api';
@@ -189,15 +189,12 @@ ipcMain.on('install-update', () => {
     }
 });
 
-app.on('window-all-closed', () => {
-    
-    if (process.platform !== 'darwin') {
-        
-    }
-});
-
 app.on('before-quit', () => {
     app.isQuitting = true;
+    if (tray) {
+        tray.destroy();
+        tray = null;
+    }
 });
 
 app.on('activate', () => {
@@ -260,7 +257,12 @@ ipcMain.handle('search-streamers', async (_, query: string) => {
     return await searchStreamers(query);
 });
 
+let syncInProgress = false;
+
 ipcMain.on('kick-login-sync', (event) => {
+    if (syncInProgress) return;
+    syncInProgress = true;
+
     const loginWin = new BrowserWindow({
         width: 600,
         height: 800,
@@ -350,8 +352,24 @@ ipcMain.on('kick-login-sync', (event) => {
         console.error('Debugger attach failed', err);
     }
 
+    const cleanupSync = () => {
+        syncInProgress = false;
+        try {
+            if (!loginWin.isDestroyed() && loginWin.webContents.debugger.isAttached()) {
+                loginWin.webContents.debugger.detach();
+            }
+        } catch (e) {}
+    };
+
     let syncDone = false;
-    const checkLogin = setInterval(async () => {
+    let checkLogin: ReturnType<typeof setInterval>;
+
+    loginWin.on('closed', () => {
+        clearInterval(checkLogin);
+        cleanupSync();
+    });
+
+    checkLogin = setInterval(async () => {
         if (loginWin.isDestroyed()) {
             clearInterval(checkLogin);
             if (!syncDone) event.reply('kick-sync-results', null);
@@ -554,11 +572,11 @@ ipcMain.on('kick-login-sync', (event) => {
 
 ipcMain.handle('kick-logout', async () => {
     try {
-        const { session } = require('electron');
-        const kickSession = session.defaultSession;
+        const kickSession = session.fromPartition('persist:kick');
         await kickSession.clearStorageData({ origin: 'https://kick.com' });
         return true;
     } catch (e) {
+        console.error('Logout failed:', e);
         return false;
     }
 });
@@ -581,7 +599,9 @@ ipcMain.handle('set-settings', (_, settings) => {
 });
 
 ipcMain.handle('open-external', (_, url: string) => {
-    shell.openExternal(url);
+    if (typeof url === 'string' && url.startsWith('https://')) {
+        shell.openExternal(url);
+    }
 });
 
 let notificationWin: BrowserWindow | null = null;
@@ -607,8 +627,10 @@ ipcMain.handle('show-notification', (_, { title, body, icon, silent, style }) =>
         notificationWin = null;
     }
 
-    const { screen } = require('electron');
-    const display = screen.getDisplayNearestPoint(screen.getCursorScreenPoint());
+    ipcMain.removeAllListeners('notification-ready');
+
+    const { screen: electronScreen } = require('electron');
+    const display = electronScreen.getDisplayNearestPoint(electronScreen.getCursorScreenPoint());
     const { x, y, width, height } = display.workArea;
 
     notificationWin = new BrowserWindow({

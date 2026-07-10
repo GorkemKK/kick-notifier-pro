@@ -1,20 +1,60 @@
 import { contextBridge, ipcRenderer } from 'electron'
 
+const ALLOWED_SEND_CHANNELS = [
+    'window-minimize',
+    'window-close',
+    'kick-login-sync',
+    'check-for-updates',
+    'install-update',
+    'notification-ready',
+];
+
+const ALLOWED_INVOKE_CHANNELS = [
+    'get-settings',
+    'set-settings',
+    'get-streamers',
+    'add-streamer',
+    'remove-streamer',
+    'update-streamers',
+    'get-streamer-info',
+    'search-streamers',
+    'show-notification',
+    'open-external',
+    'kick-logout',
+    'download-update',
+    'install-update',
+];
+
+const ALLOWED_RECEIVE_CHANNELS = [
+    'kick-sync-results',
+    'update-available',
+    'update-not-available',
+    'download-progress',
+    'update-downloaded',
+    'update-error',
+    'notification-data',
+];
+
 contextBridge.exposeInMainWorld('ipcRenderer', {
-    on(...args: Parameters<typeof ipcRenderer.on>) {
-        const [channel, listener] = args
-        return ipcRenderer.on(channel, (event, ...args) => listener(event, ...args))
+    on(channel: string, listener: (...args: any[]) => void) {
+        if (ALLOWED_RECEIVE_CHANNELS.includes(channel)) {
+            return ipcRenderer.on(channel, (event, ...args) => listener(event, ...args))
+        }
     },
-    off(...args: Parameters<typeof ipcRenderer.off>) {
-        const [channel, ...omit] = args
-        return ipcRenderer.off(channel, ...omit)
+    off(channel: string, listener: (...args: any[]) => void) {
+        if (ALLOWED_RECEIVE_CHANNELS.includes(channel)) {
+            return ipcRenderer.off(channel, listener)
+        }
     },
-    send(...args: Parameters<typeof ipcRenderer.send>) {
-        const [channel, ...omit] = args
-        return ipcRenderer.send(channel, ...omit)
+    send(channel: string, ...args: any[]) {
+        if (ALLOWED_SEND_CHANNELS.includes(channel)) {
+            return ipcRenderer.send(channel, ...args)
+        }
     },
-    invoke(...args: Parameters<typeof ipcRenderer.invoke>) {
-        const [channel, ...omit] = args
-        return ipcRenderer.invoke(channel, ...omit)
+    invoke(channel: string, ...args: any[]) {
+        if (ALLOWED_INVOKE_CHANNELS.includes(channel)) {
+            return ipcRenderer.invoke(channel, ...args)
+        }
+        return Promise.reject(new Error(`IPC channel "${channel}" is not allowed`));
     },
 })

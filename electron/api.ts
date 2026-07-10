@@ -1,6 +1,15 @@
-import { BrowserWindow } from 'electron';
+import { BrowserWindow, app } from 'electron';
 
 const KICK_BASE_URL = 'https://kick.com/api/v2/channels';
+
+export function destroyWorkers() {
+    workers.forEach(w => {
+        if (w.win && !w.win.isDestroyed()) w.win.close();
+    });
+    workers.length = 0;
+}
+
+app.on('before-quit', destroyWorkers);
 
 export interface StreamerInfo {
     slug: string;
@@ -113,10 +122,8 @@ async function processQueue() {
         item.resolve(null);
     } finally {
         worker.busy = false;
-        processQueue(); 
+        processQueue();
     }
-
-    processQueue(); 
 }
 
 
@@ -133,14 +140,14 @@ export async function searchStreamers(query: string): Promise<any[]> {
     const worker = getAvailableWorker();
     if (!worker) return [];
     
+    worker.busy = true;
     const win = worker.win;
-    const currentUrl = win.webContents.getURL();
     
-    if (!currentUrl.includes('kick.com')) {
-        await win.loadURL('https://kick.com');
-    }
-
     try {
+        if (!win.webContents.getURL().includes('kick.com')) {
+            await win.loadURL('https://kick.com');
+        }
+
         const result = await win.webContents.executeJavaScript(`
             fetch('https://kick.com/api/search?searched_word=${encodeURIComponent(query)}')
                 .then(r => r.json())
@@ -157,5 +164,7 @@ export async function searchStreamers(query: string): Promise<any[]> {
     } catch (e) {
         console.error('Search failed:', e);
         return [];
+    } finally {
+        worker.busy = false;
     }
 }

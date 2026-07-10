@@ -81,7 +81,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
     const loadSettings = async () => {
         const stored = await window.ipcRenderer.invoke('get-settings');
         if (stored) {
-            setSettings({ ...settings, ...stored });
+            setSettings(prev => ({ ...prev, ...stored }));
         }
     }
 
@@ -285,7 +285,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                                             }}
                                             className="w-16 px-3 py-1.5 bg-black/50 border border-white/10 rounded-lg text-white text-center focus:outline-none focus:border-[#00E701]/50 transition-colors"
                                         />
-                                        <span className="text-sm font-medium text-[#00E701]">Dk</span>
+                                        <span className="text-sm font-medium text-[#00E701]">{t(lang, 'minutes')}</span>
                                     </div>
                                 </div>
                             </div>

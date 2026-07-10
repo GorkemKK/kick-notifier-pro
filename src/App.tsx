@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Trash2, Settings, Users, MonitorPlay, Wifi, RefreshCw, X, ExternalLink, ChevronDown, Bell, BellOff, Info } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
@@ -25,7 +25,18 @@ interface Streamer {
 import React from 'react';
 import SettingsModal from './components/SettingsModal';
 
-const StreamerCard = React.memo(({ streamer, lang, t, handleOpenStream, handleToggleMute, streamerToDelete, setStreamerToDelete, handleRemove }: any) => {
+interface StreamerCardProps {
+    streamer: Streamer;
+    lang: Language;
+    t: typeof t;
+    handleOpenStream: (slug: string) => void;
+    handleToggleMute: (slug: string) => void;
+    streamerToDelete: string | null;
+    setStreamerToDelete: (slug: string | null) => void;
+    handleRemove: (slug: string) => void;
+}
+
+const StreamerCard = React.memo(({ streamer, lang, t, handleOpenStream, handleToggleMute, streamerToDelete, setStreamerToDelete, handleRemove }: StreamerCardProps) => {
     return (
         <motion.div
             layout
@@ -199,9 +210,9 @@ export default function App() {
         { id: 'followers_desc', label: lang === 'tr' ? 'En Çok Takipçi' : 'Most Followers' }
     ];
 
-    const handleOpenStream = (slug: string) => {
+    const handleOpenStream = useCallback((slug: string) => {
         window.ipcRenderer.invoke('open-external', `https://kick.com/${slug}`);
-    };
+    }, []);
 
     
     const playNotificationSound = (soundFile: string = '1.mp3') => {
@@ -254,7 +265,7 @@ export default function App() {
             isMounted = false;
             if (intervalId) clearInterval(intervalId);
         };
-    }, []);
+    }, [settingsOpen]);
 
     useEffect(() => {
         if (!newSlug || newSlug.trim() === '') {
@@ -315,6 +326,7 @@ export default function App() {
         try {
             setLoading(true);
             const list = await window.ipcRenderer.invoke('get-streamers');
+            const settings = await window.ipcRenderer.invoke('get-settings');
             const updatedList = await Promise.all(list.map(async (s: Streamer) => {
                 if (s.is_muted) {
                     return s; 
@@ -322,7 +334,6 @@ export default function App() {
                 const info = await window.ipcRenderer.invoke('get-streamer-info', s.slug);
 
                 if (info && info.is_live && !s.is_live && !s.is_muted) {
-                    const settings = await window.ipcRenderer.invoke('get-settings');
                     const notificationsEnabled = settings?.notificationsEnabled !== false;
                     const soundEnabled = settings?.soundEnabled !== false;
 
@@ -440,7 +451,7 @@ export default function App() {
         setSyncResults(null);
     };
 
-    const handleToggleMute = async (slug: string) => {
+    const handleToggleMute = useCallback(async (slug: string) => {
         const streamer = streamers.find(s => s.slug === slug);
         const newMutedState = !streamer?.is_muted;
         const updated = streamers.map(s => s.slug === slug ? { ...s, is_muted: newMutedState } : s);
@@ -455,9 +466,9 @@ export default function App() {
         } else if (!newMutedState && mutedHistory.includes(slug.toLowerCase())) {
             await window.ipcRenderer.invoke('set-settings', { ...settings, mutedHistory: mutedHistory.filter((m: string) => m !== slug.toLowerCase()) });
         }
-    };
+    }, [streamers]);
 
-    const handleRemove = async (slug: string) => {
+    const handleRemove = useCallback(async (slug: string) => {
         setStreamerToDelete(null);
         await window.ipcRenderer.invoke('remove-streamer', slug);
         
@@ -465,9 +476,9 @@ export default function App() {
         if (settings?.soundEnabled !== false) playRemoveSound();
         
         setStreamers(prev => prev.filter(s => s.slug !== slug));
-    };
+    }, []);
 
-    const filteredStreamers = [...(activeTab === 'live'
+    const filteredStreamers = useMemo(() => [...(activeTab === 'live'
         ? streamers.filter(s => s.is_live)
         : streamers)].sort((a, b) => {
             if (sortBy === 'viewers_desc' || sortBy === 'viewers_asc') {
@@ -479,7 +490,7 @@ export default function App() {
             if (sortBy === 'viewers_asc') return (a.viewers || 0) - (b.viewers || 0);
             if (sortBy === 'followers_desc') return (b.followers || 0) - (a.followers || 0);
             return 0;
-        });
+        }), [streamers, activeTab, sortBy]);
 
     return (
         <div className="flex h-screen bg-[#0B0E0F] text-white overflow-hidden selection:bg-[#00E701] selection:text-black font-sans">
